@@ -8,51 +8,70 @@ class TreatmentController extends Controller
 {
     // GET /treatments
     public function index()
-{
-    $file = storage_path('debug/treatments.json');
+    {
+        $file = storage_path('debug/treatments.json');
 
-    if (!file_exists($file)) {
+        if (!file_exists($file)) {
+            return response()->json([
+                'message' => 'Noch keine Treatments vorhanden.',
+                'treatments' => []
+            ]);
+        }
+
+        $treatments = json_decode(file_get_contents($file), true);
+
         return response()->json([
-            'message' => 'Noch keine Treatments vorhanden.',
-            'treatments' => []
+            'message' => 'Alle Treatments aus Datei',
+            'treatments' => $treatments
         ]);
     }
-
-    $treatments = json_decode(file_get_contents($file), true);
-
-    return response()->json([
-        'message' => 'Alle Treatments aus Datei',
-        'treatments' => $treatments
-    ]);
-}
-
+    // GET /treatments/{spec} 
+    public function show($spec)
+    {
+        return response()->json([
+            'message' => "GET /treatments/$spec – einzelnes Treatment (Demo)",
+            'treatment' => [
+                '_id' => $spec,
+                'eventType' => 'Insulin',
+                'insulin' => 2.5
+            ]
+        ]);
+    }
     // POST /treatments
     public function store(Request $request)
-{
-    $data = $request->all();
+    {
+        $data = $request->all();
 
-    $file = storage_path('debug/treatments.json');
+        $file = storage_path('debug/treatments.json');
 
-    if (!file_exists($file)) {
-        file_put_contents($file, json_encode([]));
+        if (!file_exists($file)) {
+            file_put_contents($file, json_encode([]));
+        }
+
+        $existing = json_decode(file_get_contents($file), true) ?? [];
+
+
+        if (is_array($data) && isset($data[0])) {
+            $existing = array_merge($existing, $data);
+        } else {
+            $existing[] = $data;
+        }
+
+        file_put_contents($file, json_encode($existing, JSON_PRETTY_PRINT));
+
+        return response()->json([
+            'message' => 'Behandlung(en) gespeichert (temporär)',
+            'count' => count($existing)
+        ]);
     }
-
-    $existing = json_decode(file_get_contents($file), true) ?? [];
-
-
-    if (is_array($data) && isset($data[0])) {
-        $existing = array_merge($existing, $data);
-    } else {
-        $existing[] = $data;
+    // PUT /treatments 
+    public function update(Request $request)
+    {
+        return response()->json([
+            'message' => 'PUT /treatments – aktualisiert (Demo)',
+            'updated' => $request->all()
+        ]);
     }
-
-    file_put_contents($file, json_encode($existing, JSON_PRETTY_PRINT));
-
-    return response()->json([
-        'message' => 'Behandlung(en) gespeichert (temporär)',
-        'count' => count($existing)
-    ]);
-}
     // DELETE /treatments
     public function destroy(Request $request)
     {

@@ -9,67 +9,78 @@ class EntryController extends Controller
     // GET /entries
     public function index()
     {
-        // The query used to find entries
-        $find = request()->query('find', []);
-        // Number of entries to return.
-        $count = request()->query('count', null);
         return response()->json([
-            'message' => 'Alle Entries abgerufen (Demo)',
-            'find' => $find,
-            'count' => $count,
-            'demo_entries' => [
+            'message' => 'GET /entries – alle Einträge (Demo)',
+            'entries' => [
                 [
-                    "type" => "sgv",
-                    "dateString" => "2024-06-01T19:20:00Z",
-                    "date" => 1747573200000,
-                    "sgv" => 140,
-                ],
-                [
-                    "type" => "mbg",
-                    "dateString" => "2024-06-01T19:30:00Z",
-                    "date" => 1747573800000,
-                    "sgv" => 150,
+                    '_id' => 'abc123',
+                    'type' => 'sgv',
+                    'sgv' => 120,
+                    'date' => now()->timestamp * 1000,
+                    'dateString' => now()->toIso8601String()
                 ]
             ]
         ]);
     }
+
     // GET /entries/{spec}
     public function show($spec)
     {
-        // The query used to find entries
-        $find = request()->query('find', []);
-        // Number of entries to return.
-        $count = request()->query('count', null);
         return response()->json([
-            'message' => "Entry abgerufen für Spec: '$spec'",
+            'message' => "GET /entries/$spec – Eintrag anzeigen (Demo)",
             'entry' => [
-                "type" => $spec,
-                "dateString" => "2024-06-01T19:20:00Z",
-                "date" => 1747573200000,
-                "sgv" => $spec === 'sgv' ? 140 : null,
+                '_id' => $spec,
+                'type' => 'sgv',
+                'sgv' => 130
             ]
         ]);
     }
+
+    // GET /entries/current
+    public function current()
+    {
+        return response()->json([
+            'message' => 'GET /entries/current – aktueller Eintrag (Demo)',
+            'entry' => [
+                '_id' => 'current123',
+                'sgv' => 125,
+                'date' => now()->timestamp * 1000
+            ]
+        ]);
+    }
+
     // POST /entries
     public function store(Request $request)
     {
         return response()->json([
-            'message' => 'POST request angekommen bei /entries (Demo)',
+            'message' => 'POST /entries – empfangen (Demo)',
             'received' => $request->all()
         ]);
     }
+
+    // POST /entries/preview
+    public function preview(Request $request)
+    {
+        return response()->json([
+            'message' => 'POST /entries/preview – validiert (Demo)',
+            'validated' => $request->all()
+        ]);
+    }
+
+    // DELETE /entries/{spec}
+    public function destroySpec($spec)
+    {
+        return response()->json([
+            'message' => "DELETE /entries/$spec – gelöscht (Demo)"
+        ]);
+    }
+
     // DELETE /entries
     public function destroy(Request $request)
     {
-        //The query used to find entries
-        $find = $request->query('find', []);
-        // Number of entries to return.
-        $count = $request->query('count', null);
-
         return response()->json([
-            'message' => 'DELETE request angekommen bei /entries (Demo)',
-            'find' => $find,
-            'count' => $count,
+            'message' => 'DELETE /entries – per Filter gelöscht (Demo)',
+            'filter' => $request->query('find', [])
         ]);
     }
 }
