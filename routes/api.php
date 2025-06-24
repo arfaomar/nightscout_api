@@ -15,6 +15,7 @@ use App\Http\Controllers\GoogleHomeController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\RootController;
 use App\Http\Controllers\VerifyAuthController;
+use App\Http\Controllers\AuthorizationController;
 
 // Entries
 Route::get('/entries', [EntryController::class, 'index']);
@@ -86,4 +87,7 @@ Route::get('/versions', [RootController::class, 'versions']);
 
 // VerifyAuth
 Route::get('/verifyauth', [VerifyAuthController::class, 'index']);
+
+// Request Auth
+Route::get('/v2/authorization/request/token={apiSecret}', [AuthorizationController::class, 'requestToken']);
 
