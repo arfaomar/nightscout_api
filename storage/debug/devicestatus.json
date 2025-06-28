@@ -61,5 +61,127 @@
         "uploaderBattery": 100,
         "isCharging": false,
         "configuration": []
+    },
+    {
+        "created_at": "2025-06-21T15:11:47.735Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": []
+    },
+    {
+        "created_at": "2025-06-21T15:21:47.245Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": []
+    },
+    {
+        "created_at": "2025-06-21T15:26:49.884Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": []
+    },
+    {
+        "created_at": "2025-06-21T15:31:49.898Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": {
+            "insulin": 2,
+            "insulinConfiguration": [],
+            "aps": "SMB",
+            "apsConfiguration": {
+                "use_dynamic_sensitivity": false,
+                "DynISFAdjust": 100
+            },
+            "sensitivity": 2,
+            "sensitivityConfiguration": {
+                "openaps_smb_min_5m_carbimpact": 8,
+                "absorption_cutoff": 6,
+                "autosens_min": 0.7,
+                "autosens_max": 1.2
+            },
+            "smoothing": "NoSmoothingPlugin",
+            "overviewConfiguration": {
+                "units": "mg\/dl",
+                "eatingsoon_duration": 45,
+                "eatingsoon_target": 90,
+                "activity_duration": 90,
+                "activity_target": 140,
+                "hypo_duration": 60,
+                "hypo_target": 160,
+                "low_mark": 72,
+                "high_mark": 180,
+                "statuslights_cage_warning": 48,
+                "statuslights_cage_critical": 72,
+                "statuslights_iage_warning": 72,
+                "statuslights_iage_critical": 144,
+                "statuslights_sage_warning": 216,
+                "statuslights_sage_critical": 240,
+                "statuslights_sbat_warning": 25,
+                "statuslights_sbat_critical": 5,
+                "statuslights_bage_warning": 216,
+                "statuslights_bage_critical": 240,
+                "statuslights_res_warning": 80,
+                "statuslights_res_critical": 10,
+                "statuslights_bat_warning": 51,
+                "statuslights_bat_critical": 26,
+                "boluswizard_percentage": 100,
+                "used_autosens_on_main_phone": false
+            },
+            "safetyConfiguration": {
+                "age": "adult",
+                "treatmentssafety_maxbolus": 3,
+                "treatmentssafety_maxcarbs": 48
+            },
+            "pump": "Generic AAPS",
+            "version": "3.3.2.0"
+        }
+    },
+    {
+        "created_at": "2025-06-21T15:36:49.921Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": []
+    },
+    {
+        "created_at": "2025-06-21T15:41:49.992Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": []
+    },
+    {
+        "created_at": "2025-06-24T19:23:43.864Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": []
+    },
+    {
+        "created_at": "2025-06-24T19:28:44.004Z",
+        "device": "openaps:\/\/Google sdk_gphone64_x86_64",
+        "pump": [],
+        "openaps": [],
+        "uploaderBattery": 100,
+        "isCharging": false,
+        "configuration": []
     }
 ]
