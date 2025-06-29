@@ -1,7 +1,7 @@
 # Title (short, descriptive, e.g. "Database Technology Choice")
 
 ## Status
-Accepted / Proposed / Deprecated / Superseded
+`Accepted` / `Proposed` / `Deprecated` / `Superseded`
 
 ## Context
 Why is this decision being made?  
