@@ -14,14 +14,14 @@ This PSE project implements a PHP-based emulation of the Nightscout V1 REST API,
 ## Index
 Please list new ADRs here, using the filename format: `NNNN-title.md` (e.g., `0001-db-emulation.md`).
 
-| ADR Filename                                       | Summary                                           | Status     | Date    |
-| -------------------------------------------------- | ------------------------------------------------- | ---------- | ------- |
-| [0001-php-framework.md](0001-php-framework.md)     | PHP Framework Choice (Laravel)                    | Accepted   | 2025-04 |
-| [0002-dev-environment.md](0002-dev-environment.md) | Development Environment Choice (Laravel Sail)     | Accepted   | 2025-04 |
-| [0003-db.md](0003-db.md)                           | Database Technology Choice (MySQL)                | Superseded | 2025-04 |
-| [0004-rtc.md](0004-rtc.md)                         | Real-Time Communication: Node.js Socket.IO Bridge | Accepted   | 2025-05 |
-| [0005-nosql-emulation.md](0005-nosql-emulation.md) | NoSQL Database Emulation Approach (Eloquent ORM)  | Accepted   | 2025-06 |
-| [0006-db.md](0006-db.md)                           | Database Technology Choice (PostgreSQL)           | Accepted   | 2025-06 |
+| ADR Filename                                       | Summary                                           | Status       | Date    |
+| -------------------------------------------------- | ------------------------------------------------- | ------------ | ------- |
+| [0001-php-framework.md](0001-php-framework.md)     | PHP Framework Choice (Laravel)                    | `Accepted`   | 2025-04 |
+| [0002-dev-environment.md](0002-dev-environment.md) | Development Environment Choice (Laravel Sail)     | `Accepted`   | 2025-04 |
+| [0003-db.md](0003-db.md)                           | Database Technology Choice (MySQL)                | `Superseded` | 2025-04 |
+| [0004-rtc.md](0004-rtc.md)                         | Real-Time Communication: Node.js Socket.IO Bridge | `Accepted`   | 2025-05 |
+| [0005-nosql-emulation.md](0005-nosql-emulation.md) | NoSQL Database Emulation Approach (Eloquent ORM)  | `Accepted`   | 2025-06 |
+| [0006-db.md](0006-db.md)                           | Database Technology Choice (PostgreSQL)           | `Accepted`   | 2025-06 |
 
 ## How to contribute
 - When a significant architectural or technical decision is made, create a new ADR in this folder.
