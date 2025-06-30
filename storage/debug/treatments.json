@@ -1,0 +1,11 @@
+[
+    {
+        "eventType": "BG Check",
+        "isValid": true,
+        "created_at": "2025-06-29T14:03:28.000Z",
+        "enteredBy": "AAPS",
+        "units": "mg\/dl",
+        "glucose": 200,
+        "glucoseType": "Finger"
+    }
+]
