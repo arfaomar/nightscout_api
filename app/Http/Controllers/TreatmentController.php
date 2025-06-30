@@ -14,31 +14,17 @@ class TreatmentController extends Controller
 
         if ($treatments->isEmpty()) {
             return response()->json([
-                'message' => 'Keine Treatments gefunden',
+                'message' => 'No treatments found',
+                'count' => 0,
                 'treatments' => []
             ]);
         }
 
         return response()->json([
-            'message' => 'Alle Treatments geladen',
+            'message' => 'All treatments loaded',
+            'count' => $treatments->count(),
             'treatments' => $treatments
         ]);
-    }
-
-    // GET /treatments/{spec} 
-    public function show($spec)
-    {
-        $treatment = Treatment::find($spec);
-
-        if (!$treatment) {
-            return response()->json(['message' => 'Treatment nicht gefunden'], 404);
-        }
-
-        return response()->json([
-            'message' => "Einzelnes Treatment geladen",
-            'treatment' => $treatment
-        ]);
-
     }
 
     // POST /treatments
@@ -60,34 +46,39 @@ class TreatmentController extends Controller
         }
 
         return response()->json([
-            'message' => 'Behandlung(en) gespeichert',
+            'message' => 'Treatments saved',
             'count' => $count
         ]);
     }
 
     // PUT /treatments 
-   public function update(Request $request)
+    public function update(Request $request)
     {
         $data = $request->all();
+        $count = 0;
 
         if (isset($data['_id'])) {
             $treatment = Treatment::where('_id', $data['_id'])->first();
 
             if ($treatment) {
                 $treatment->update($data);
-                $message = 'Treatment aktualisiert';
+                $message = 'Treatment updated';
+                $count = 1;
             } else {
                 Treatment::create($data);
-                $message = 'Treatment neu angelegt';
+                $message = 'New treatment created';
+                $count = 1;
             }
         } else {
             $data['_id'] = bin2hex(random_bytes(12));
             Treatment::create($data);
-            $message = 'Treatment neu angelegt (mit generierter _id)';
+            $message = 'New treatment created (with generated _id)';
+            $count = 1;
         }
 
         return response()->json([
             'message' => $message,
+            'count' => $count,
             'treatment' => $data
         ]);
     }
@@ -121,21 +112,21 @@ class TreatmentController extends Controller
             }
         }
 
-        $deleted = $query->delete();
+        $count = $query->delete();
 
-        if ($deleted === 0) {
+        if ($count === 0) {
             return response()->json([
-                'message' => 'Keine passenden Treatments gefunden. Nichts gelöscht.',
-                'deleted' => 0], 
+                'message' => 'No matching treatments found. Nothing deleted',
+                'count' => 0,
+                ], 
                 404);
         }
 
         return response()->json([
-            'message' => 'Treatments gelöscht',
-            'deleted' => $deleted
+            'message' => 'Treatments deleted',
+            'count' => $count
         ]);
     }
-
 
     // DELETE /treatments/{spec}
     public function destroySpec($spec)
@@ -143,16 +134,18 @@ class TreatmentController extends Controller
         $treatment = Treatment::where('_id', $spec)->first();
 
         if (!$treatment) {
-            return response()->json(['message' => 'Treatment nicht gefunden'], 404);
+            return response()->json(['message' => 'Treatment not found',
+                'count' => 0,
+                'treatment' => null
+            ], 404);
         }
 
-        $treatment->delete();
+        $count = $treatment->delete();
 
         return response()->json([
-            'message' => "Treatment mit der ID: $spec geloescht",
+            'message' => "Treatment with ID: $spec deleted",
+            'count' => $count,
             'id' => $spec
         ]);
-
     }
-    
 }
