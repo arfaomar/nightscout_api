@@ -3,95 +3,156 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Treatment;
 
 class TreatmentController extends Controller
 {
     // GET /treatments
     public function index()
     {
-        $file = storage_path('debug/treatments.json');
+        $treatments = Treatment::all();
 
-        if (!file_exists($file)) {
+        if ($treatments->isEmpty()) {
             return response()->json([
-                'message' => 'Noch keine Treatments vorhanden.',
+                'message' => 'Keine Treatments gefunden',
                 'treatments' => []
             ]);
         }
 
-        $treatments = json_decode(file_get_contents($file), true);
-
         return response()->json([
-            'message' => 'Alle Treatments aus Datei',
+            'message' => 'Alle Treatments geladen',
             'treatments' => $treatments
         ]);
     }
+
     // GET /treatments/{spec} 
     public function show($spec)
     {
+        $treatment = Treatment::find($spec);
+
+        if (!$treatment) {
+            return response()->json(['message' => 'Treatment nicht gefunden'], 404);
+        }
+
         return response()->json([
-            'message' => "GET /treatments/$spec – einzelnes Treatment (Demo)",
-            'treatment' => [
-                '_id' => $spec,
-                'eventType' => 'Insulin',
-                'insulin' => 2.5
-            ]
+            'message' => "Einzelnes Treatment geladen",
+            'treatment' => $treatment
         ]);
+
     }
+
     // POST /treatments
     public function store(Request $request)
     {
         $data = $request->all();
-
-        $file = storage_path('debug/treatments.json');
-
-        if (!file_exists($file)) {
-            file_put_contents($file, json_encode([]));
-        }
-
-        $existing = json_decode(file_get_contents($file), true) ?? [];
-
+        $count = 0;
 
         if (is_array($data) && isset($data[0])) {
-            $existing = array_merge($existing, $data);
+            foreach ($data as &$entry) {
+                $entry['_id'] = bin2hex(random_bytes(12));
+                Treatment::create($entry);
+                $count++;
+            }
         } else {
-            $existing[] = $data;
+            $data['_id'] = bin2hex(random_bytes(12));
+            Treatment::create($data);
+            $count = 1;
         }
 
-        file_put_contents($file, json_encode($existing, JSON_PRETTY_PRINT));
-
         return response()->json([
-            'message' => 'Behandlung(en) gespeichert (temporär)',
-            'count' => count($existing)
-        ]);
-    }
-    // PUT /treatments 
-    public function update(Request $request)
-    {
-        return response()->json([
-            'message' => 'PUT /treatments – aktualisiert (Demo)',
-            'updated' => $request->all()
-        ]);
-    }
-    // DELETE /treatments
-    public function destroy(Request $request)
-    {
-        // The query used to find treatments
-        $find = $request->query('find', []);
-        // Number of treatments to return.
-        $count = $request->query('count', null);
-
-        return response()->json([
-            'message' => 'DELETE request angekommen bei /treatments (Demo)',
-            'find' => $find,
+            'message' => 'Behandlung(en) gespeichert',
             'count' => $count
         ]);
     }
+
+    // PUT /treatments 
+   public function update(Request $request)
+    {
+        $data = $request->all();
+
+        if (isset($data['_id'])) {
+            $treatment = Treatment::where('_id', $data['_id'])->first();
+
+            if ($treatment) {
+                $treatment->update($data);
+                $message = 'Treatment aktualisiert';
+            } else {
+                Treatment::create($data);
+                $message = 'Treatment neu angelegt';
+            }
+        } else {
+            $data['_id'] = bin2hex(random_bytes(12));
+            Treatment::create($data);
+            $message = 'Treatment neu angelegt (mit generierter _id)';
+        }
+
+        return response()->json([
+            'message' => $message,
+            'treatment' => $data
+        ]);
+    }
+
+    // DELETE /treatments
+    public function destroy(Request $request)
+    {
+        $find = $request->query('find', []);
+        $query = Treatment::query();
+
+        foreach ($find as $field => $condition) {
+            if (is_array($condition)) {
+                foreach ($condition as $op => $value) {
+                    switch ($op) {
+                        case '$lt':
+                            $query->where($field, '<', $value);
+                            break;
+                        case '$lte':
+                            $query->where($field, '<=', $value);
+                            break;
+                        case '$gt':
+                            $query->where($field, '>', $value);
+                            break;
+                        case '$gte':
+                            $query->where($field, '>=', $value);
+                            break;
+                    }
+                }
+            } else {
+                $query->where($field, $condition);
+            }
+        }
+
+        $deleted = $query->delete();
+
+        if ($deleted === 0) {
+            return response()->json([
+                'message' => 'Keine passenden Treatments gefunden. Nichts gelöscht.',
+                'deleted' => 0], 
+                404);
+        }
+
+        return response()->json([
+            'message' => 'Treatments gelöscht',
+            'deleted' => $deleted
+        ]);
+    }
+
+
     // DELETE /treatments/{spec}
     public function destroySpec($spec)
     {
+        $treatment = Treatment::where('_id', $spec)->first();
+
+        if (!$treatment) {
+            return response()->json(['message' => 'Treatment nicht gefunden'], 404);
+        }
+
+        $treatment->delete();
+
         return response()->json([
-            'message' => "DELETE request angekommen bei /treatments/$spec (Demo)",
-            'spec' => $spec
+            'message' => "Treatment mit der ID: $spec geloescht",
+            'id' => $spec
         ]);
+
     }
+    
 }
