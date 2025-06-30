@@ -2,79 +2,112 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeviceStatus;
 use Illuminate\Http\Request;
+use App\Helpers\QueryHelper;
+use Illuminate\Support\Facades\Log;
 
 class DeviceStatusController extends Controller
 {
     // GET /devicestatus
-    public function index()
-{
-    $file = storage_path('debug/devicestatus.json');
+    public function index(Request $request)
+    {
+        $query = DeviceStatus::query();
+        
+        $find = request()->query('find', []);
+        QueryHelper::applyNightscoutFind($query, $find);
+        $count = $request->query('count');
+        if ($count && is_numeric($count)) {
+            $query->orderByDesc('created_at')->limit((int)$count);
+        }
+        $statuses = $query->get();
 
-    if (!file_exists($file)) {
-        return response()->json([
-            'message' => 'Noch keine DeviceStatus-Daten vorhanden.',
-            'devicestatus' => []
-        ]);
+        return response()->json($statuses);
     }
-
-    $devicestatus = json_decode(file_get_contents($file), true);
-
-    return response()->json([
-        'message' => 'Alle DeviceStatus aus Datei',
-        'devicestatus' => $devicestatus
-    ]);
-}
 
 
     // POST /devicestatus
     public function store(Request $request)
-{
-    $data = $request->all();
-    $file = storage_path('debug/devicestatus.json');
+    {
+        $data = $request->all();
 
-    // Falls Datei nicht existiert, leeres Array schreiben
-    if (!file_exists($file)) {
-        file_put_contents($file, json_encode([]));
+        if (is_array($data) && isset($data[0])) {
+            $data = $data[0];
+        }
+
+        if (!isset($data['_id'])) {
+            $data['_id'] = bin2hex(random_bytes(12));
+        }
+
+        if (isset($data['created_at'])) {
+            $data['created_at'] = \Carbon\Carbon::parse($data['created_at']);
+        }
+
+        foreach (['pump', 'openaps', 'configuration', 'loop', 'uploader', 'xdripjs'] as $jsonField) {
+            if (isset($data[$jsonField])) {
+                if (is_array($data[$jsonField]) && count($data[$jsonField]) === 0) {
+                    $data[$jsonField] = null;
+                }
+                if ($data[$jsonField] === "" || $data[$jsonField] === null) {
+                    $data[$jsonField] = null;
+                }
+            }
+        }
+        if (isset($data['pump']) && is_array($data['pump']) && isset($data['pump']['id'])) {
+            $data['pump_id'] = $data['pump']['id'];
+        }
+        if (isset($data['uploader']) && is_array($data['uploader']) && isset($data['uploader']['id'])) {
+            $data['uploader_id'] = $data['uploader']['id'];
+        }
+        if (isset($data['xdripjs']) && is_array($data['xdripjs']) && isset($data['xdripjs']['id'])) {
+            $data['xdripjs_id'] = $data['xdripjs']['id'];
+        }
+
+        DeviceStatus::create($data);
+
+        return response()->json([
+            'message' => 'DeviceStatus saved'
+        ], 201);
     }
-
-    // Bestehende Daten laden
-    $existing = json_decode(file_get_contents($file), true) ?? [];
-
-    // Neue Daten anhängen
-    if (is_array($data) && isset($data[0])) {
-        $existing = array_merge($existing, $data);
-    } else {
-        $existing[] = $data;
-    }
-
-    // Speichern
-    file_put_contents($file, json_encode($existing, JSON_PRETTY_PRINT));
-
-    return response()->json([
-        'message' => 'DeviceStatus gespeichert',
-        'received_count' => is_array($data) ? count($data) : 1
-    ]);
-}
 
 
     // DELETE /devicestatus
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        // The query usetd to find entries
-        $find = $request->query('find', []);
+        $status = DeviceStatus::find($id);
+        if (!$status) {
+            return response()->json(['message' => 'DeviceStatus not found'], 404);
+        }
+        $status->delete();
         return response()->json([
-            'message' => 'DELETE request angekommen bei /devicestatus (Demo)',
-            'find' => $find
+            'message' => 'DeviceStatus deleted',
+            'id' => $id
         ]);
     }
 
     // DELETE /devicestatus/{spec}
-    public function destroySpec($spec)
+    public function destroyByQuery(Request $request)
     {
+        $query = DeviceStatus::query();
+
+        foreach ($request->all() as $field => $value) {
+
+            $query->where($field, $value);
+        }
+
+        $count = $query->count();
+        if ($count === 0) {
+            return response()->json([
+                'message' => 'No matching DeviceStatus found. Nothing deleted.',
+                'deleted' => 0
+            ], 404);
+        }
+
+        $deleted = $query->delete();
+
         return response()->json([
-            'message' => "DELETE request angekommen für /devicestatus/$spec (Demo)",
-            'spec' => $spec
+            'message' => 'DeviceStatus deleted',
+            'deleted' => $deleted
         ]);
     }
 }

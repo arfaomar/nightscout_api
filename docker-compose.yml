@@ -22,12 +22,12 @@ services:
         networks:
             - sail
         depends_on:
-            - pgsql  # <- Ändern!
+            - pgsql 
 
     pgsql:
         image: 'postgres:15'
         ports:
-            - '${FORWARD_DB_PORT:-5432}:5432'
+            - '${FORWARD_DB_PORT:-5433}:5432'
         environment:
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
