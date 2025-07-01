@@ -15,11 +15,11 @@ class QueryHelper
      * @param array $find The conditions to apply, structured as an associative array.
      * @return Builder The modified query builder instance.
      */
-    public static function applyNightscoutFind(\Illuminate\Database\Eloquent\Builder $query, array $find)
+    public static function applyNightscoutFind(Builder $query, array $find)
     {
         static $columns = null;
         if ($columns === null) {
-            $columns = \Schema::getColumnListing($query->getModel()->getTable());
+            $columns = Schema::getColumnListing($query->getModel()->getTable());
         }
         foreach ($find as $field => $condition) {
             if (is_array($condition) && self::isAssoc($condition) && !self::containsOperator($condition)) {
