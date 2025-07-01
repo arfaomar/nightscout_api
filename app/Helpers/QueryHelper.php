@@ -8,12 +8,14 @@ use Illuminate\Support\Facades\Schema;
 class QueryHelper
 {
     /**
-     * Uses the Nightscout find syntax to apply conditions to a query.
-     * Supports operators: $lt, $lte, $gt, $gte, $ne, $eq (default), etc.
+     * Applies Nightscout-style "find" conditions to an Eloquent query builder.
+     * 
+     * Supports MongoDB-like operators ($lt, $lte, $gt, $gte, $ne, $eq, $in, $nin, $regex) on both
+     * SQL columns and on nested fields stored in a JSON/JSONB "extra_data" column.
      * 
      * @param Builder $query The query builder instance.
-     * @param array $find The conditions to apply, structured as an associative array.
-     * @return Builder The modified query builder instance.
+     * @param array $find The find conditions as an associative array.
+     * @return Builder The modified query builder.
      */
     public static function applyNightscoutFind(Builder $query, array $find)
     {
@@ -22,6 +24,7 @@ class QueryHelper
             $columns = Schema::getColumnListing($query->getModel()->getTable());
         }
         foreach ($find as $field => $condition) {
+            // If nested JSON path, process recursively
             if (is_array($condition) && self::isAssoc($condition) && !self::containsOperator($condition)) {
                 $jsonPath = 'extra_data';
                 $sub = $condition;
@@ -41,6 +44,7 @@ class QueryHelper
                     $query->where($jsonPath, $sub);
                 }
             } else {
+                // If the field is a regular column
                 if (in_array($field, $columns)) {
                     if (is_array($condition)) {
                         foreach ($condition as $op => $value) {
@@ -50,6 +54,7 @@ class QueryHelper
                         $query->where($field, $condition);
                     }
                 } else {
+                    // Handle JSON/JSONB fields for operators
                     if (is_array($condition)) {
                         foreach ($condition as $op => $value) {
                             $escapedField = addslashes($field);
@@ -118,11 +123,11 @@ class QueryHelper
                                     break;
 
                                 default:
-
                                     break;
                             }
                         }
                     } else {
+                         // If not an array, just check for equality
                         $query->orWhereRaw(
                             "jsonb_path_exists(extra_data, '$.**.\"$field\" ? (@ == :find_val)')",
                             ['find_val' => $condition]
@@ -133,21 +138,41 @@ class QueryHelper
         }
         return $query;
     }
-
+    /**
+     * Checks if an array is associative (not a list).
+     * 
+     * @param array $arr
+     * @return bool
+     */
     public static function isAssoc(array $arr)
     {
         if ([] === $arr) return false;
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
-
+    /**
+     * Checks if an associative array contains at least one key starting with '$'
+     * (meaning, it's using an operator syntax).
+     * 
+     * @param array $arr
+     * @return bool
+     */
     public static function containsOperator(array $arr)
     {
         return count(array_filter(array_keys($arr), function ($k) {
             return strpos($k, '$') === 0;
         })) > 0;
     }
-
+    /**
+     * Applies a single operator ($eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $regex)
+     * to the Eloquent query builder for the given field.
+     * 
+     * @param Builder $query
+     * @param string $field
+     * @param string $op
+     * @param mixed $value
+     * @return void
+     */
     public static function applyOp($query, $field, $op, $value)
     {
         switch ($op) {
