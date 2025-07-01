@@ -1,5 +1,6 @@
 <?php
 namespace Database\Factories;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -9,6 +10,17 @@ class DeviceStatusFactory extends Factory
 
     public function definition()
     {
+        $extraFields = [
+            'firmwareVersion' => $this->faker->randomElement(['1.0', '1.2.3', '2.0']),
+            'batteryHealth'   => $this->faker->randomElement(['good', 'normal', 'bad']),
+            'customFlag'      => $this->faker->boolean(),
+            'randomText'      => $this->faker->sentence(),
+            'meta'            => [
+                'code' => $this->faker->randomNumber(3),
+                'desc' => $this->faker->word(),
+            ]
+        ];
+
         return [
             '_id' => Str::random(24),
             'device' => $this->faker->word(),
@@ -22,6 +34,7 @@ class DeviceStatusFactory extends Factory
             'uploader' => [],
             'xdripjs_id' => null,
             'xdripjs' => [],
+            'extra_data' => $extraFields, 
         ];
     }
 }

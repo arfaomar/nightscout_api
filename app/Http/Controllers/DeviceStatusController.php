@@ -28,48 +28,63 @@ class DeviceStatusController extends Controller
 
 
     // POST /devicestatus
+    // Care i probably need to change it but im not sure atm. It works right now.
     public function store(Request $request)
-    {
-        $data = $request->all();
+{
+    $data = $request->all();
 
-        if (is_array($data) && isset($data[0])) {
-            $data = $data[0];
-        }
+    if (is_array($data) && isset($data[0])) {
+        $data = $data[0];
+    }
 
-        if (!isset($data['_id'])) {
-            $data['_id'] = bin2hex(random_bytes(12));
-        }
+    if (!isset($data['_id'])) {
+        $data['_id'] = bin2hex(random_bytes(12));
+    }
 
-        if (isset($data['created_at'])) {
-            $data['created_at'] = \Carbon\Carbon::parse($data['created_at']);
-        }
+    if (isset($data['created_at'])) {
+        $data['created_at'] = \Carbon\Carbon::parse($data['created_at']);
+    }
 
-        foreach (['pump', 'openaps', 'configuration', 'loop', 'uploader', 'xdripjs'] as $jsonField) {
-            if (isset($data[$jsonField])) {
-                if (is_array($data[$jsonField]) && count($data[$jsonField]) === 0) {
-                    $data[$jsonField] = null;
-                }
-                if ($data[$jsonField] === "" || $data[$jsonField] === null) {
-                    $data[$jsonField] = null;
-                }
+    foreach (['pump', 'openaps', 'configuration', 'loop', 'uploader', 'xdripjs'] as $jsonField) {
+        if (isset($data[$jsonField])) {
+            if (is_array($data[$jsonField]) && count($data[$jsonField]) === 0) {
+                $data[$jsonField] = null;
+            }
+            if ($data[$jsonField] === "" || $data[$jsonField] === null) {
+                $data[$jsonField] = null;
             }
         }
-        if (isset($data['pump']) && is_array($data['pump']) && isset($data['pump']['id'])) {
-            $data['pump_id'] = $data['pump']['id'];
-        }
-        if (isset($data['uploader']) && is_array($data['uploader']) && isset($data['uploader']['id'])) {
-            $data['uploader_id'] = $data['uploader']['id'];
-        }
-        if (isset($data['xdripjs']) && is_array($data['xdripjs']) && isset($data['xdripjs']['id'])) {
-            $data['xdripjs_id'] = $data['xdripjs']['id'];
-        }
-
-        DeviceStatus::create($data);
-
-        return response()->json([
-            'message' => 'DeviceStatus saved'
-        ], 201);
     }
+    if (isset($data['pump']) && is_array($data['pump']) && isset($data['pump']['id'])) {
+        $data['pump_id'] = $data['pump']['id'];
+    }
+    if (isset($data['uploader']) && is_array($data['uploader']) && isset($data['uploader']['id'])) {
+        $data['uploader_id'] = $data['uploader']['id'];
+    }
+    if (isset($data['xdripjs']) && is_array($data['xdripjs']) && isset($data['xdripjs']['id'])) {
+        $data['xdripjs_id'] = $data['xdripjs']['id'];
+    }
+
+    $fixedFields = [
+        '_id', 'device', 'created_at', 'openaps', 'loop', 'uploaderBattery',
+        'isCharging', 'configuration', 'pump_id', 'pump',
+        'uploader_id', 'uploader', 'xdripjs_id', 'xdripjs'
+    ];
+
+    $extra = collect($data)->except($fixedFields)->toArray();
+    $main = collect($data)->only($fixedFields)->toArray();
+
+
+    $main['extra_data'] = $extra;
+    Log::info('DeviceStatusController@store called with data: ' . json_encode($main));
+
+    DeviceStatus::create($main);
+
+    return response()->json([
+        'message' => 'DeviceStatus saved'
+    ], 201);
+}
+
 
 
     // DELETE /devicestatus

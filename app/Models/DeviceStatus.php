@@ -30,6 +30,7 @@ class DeviceStatus extends Model
         'uploader',
         'xdripjs_id',
         'xdripjs',
+        'extra_data',
     ];
 
     protected $casts = [
@@ -38,6 +39,7 @@ class DeviceStatus extends Model
         'xdripjs' => 'array',
         'configuration' => 'array',
         'isCharging' => 'boolean',
+        'extra_data' => 'array',
     ];
 
 

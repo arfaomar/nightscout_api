@@ -32,6 +32,8 @@ return new class extends Migration
             $table->unsignedBigInteger('xdripjs_id')->nullable();
             $table->foreign('xdripjs_id')->references('id')->on('xdripjs')->onDelete('set null');
             $table->json('xdripjs')->nullable();
+
+            $table->jsonb('extra_data')->nullable();
         });
     }
 
