@@ -9,6 +9,10 @@ class QueryHelper
     /**
      * Uses the Nightscout find syntax to apply conditions to a query.
      * Supports operators: $lt, $lte, $gt, $gte, $ne, $eq (default), etc.
+     * 
+     * @param Builder $query The query builder instance.
+     * @param array $find The conditions to apply, structured as an associative array.
+     * @return Builder The modified query builder instance.
      */
     public static function applyNightscoutFind(Builder $query, array $find)
     {
@@ -48,10 +52,25 @@ class QueryHelper
                     }
                 }
             } else {
-                // Normalwert
                 $query->where($field, $condition);
             }
         }
         return $query;
+    }
+    /**
+     * Applies a count limit to the query, ordering by created_at descending.
+     * If $count is provided and is numeric, it limits the results to that count.
+     *  
+     *  
+     * @param Builder $query The query builder instance.
+     * @param int|null $count The maximum number of results to return.
+     * @return void
+     * */
+     public static function applyCount(Builder $query, $count = null)
+    {
+        $query->orderByDesc('created_at');
+        if ($count && is_numeric($count)) {
+            $query->limit((int)$count);
+        }
     }
 }

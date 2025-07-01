@@ -12,18 +12,19 @@ class DeviceStatusController extends Controller
     // GET /devicestatus
     public function index(Request $request)
     {
+        Log::info('DeviceStatusController@index called with query: ' . json_encode($request->query()));
         $query = DeviceStatus::query();
-        
-        $find = request()->query('find', []);
+        $find = $request->query('find', []);
         QueryHelper::applyNightscoutFind($query, $find);
+
         $count = $request->query('count');
-        if ($count && is_numeric($count)) {
-            $query->orderByDesc('created_at')->limit((int)$count);
-        }
+        QueryHelper::applyCount($query, $count);
+
         $statuses = $query->get();
 
         return response()->json($statuses);
     }
+
 
 
     // POST /devicestatus
@@ -72,28 +73,11 @@ class DeviceStatusController extends Controller
 
 
     // DELETE /devicestatus
-    public function destroy($id)
-    {
-        $status = DeviceStatus::find($id);
-        if (!$status) {
-            return response()->json(['message' => 'DeviceStatus not found'], 404);
-        }
-        $status->delete();
-        return response()->json([
-            'message' => 'DeviceStatus deleted',
-            'id' => $id
-        ]);
-    }
-
-    // DELETE /devicestatus/{spec}
-    public function destroyByQuery(Request $request)
+    public function destroy(Request $request)
     {
         $query = DeviceStatus::query();
-
-        foreach ($request->all() as $field => $value) {
-
-            $query->where($field, $value);
-        }
+        $find = $request->query('find', []);
+        QueryHelper::applyNightscoutFind($query, $find);
 
         $count = $query->count();
         if ($count === 0) {
@@ -108,6 +92,22 @@ class DeviceStatusController extends Controller
         return response()->json([
             'message' => 'DeviceStatus deleted',
             'deleted' => $deleted
+        ]);
+    }
+
+
+    // DELETE /devicestatus/{spec}
+    public function destroySpec($spec)
+    {   
+        Log::info('DeviceStatusController@destroySpec called with spec: ' . $spec);
+        $status = DeviceStatus::find($spec);
+        if (!$status) {
+            return response()->json(['message' => 'DeviceStatus not found'], 404);
+        }
+        $status->delete();
+        return response()->json([
+            'message' => 'DeviceStatus deleted',
+            'id' => $spec
         ]);
     }
 }
