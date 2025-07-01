@@ -12,7 +12,6 @@ class DeviceStatusController extends Controller
     // GET /devicestatus
     public function index(Request $request)
     {
-        Log::info('DeviceStatusController@index called with query: ' . json_encode($request->query()));
         $query = DeviceStatus::query();
         $find = $request->query('find', []);
         QueryHelper::applyNightscoutFind($query, $find);
@@ -76,7 +75,6 @@ class DeviceStatusController extends Controller
 
 
     $main['extra_data'] = $extra;
-    Log::info('DeviceStatusController@store called with data: ' . json_encode($main));
 
     DeviceStatus::create($main);
 
@@ -114,7 +112,6 @@ class DeviceStatusController extends Controller
     // DELETE /devicestatus/{spec}
     public function destroySpec($spec)
     {   
-        Log::info('DeviceStatusController@destroySpec called with spec: ' . $spec);
         $status = DeviceStatus::find($spec);
         if (!$status) {
             return response()->json(['message' => 'DeviceStatus not found'], 404);

@@ -18,6 +18,14 @@ class DeviceStatusFactory extends Factory
             'meta'            => [
                 'code' => $this->faker->randomNumber(3),
                 'desc' => $this->faker->word(),
+                'test' => [
+                    'nested' => $this->faker->word(),
+                    'array' => [
+                        $this->faker->word(),
+                        $this->faker->word(),
+                        $this->faker->word()
+                    ]
+                ]
             ]
         ];
 
