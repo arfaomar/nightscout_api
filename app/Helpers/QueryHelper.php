@@ -25,6 +25,7 @@ class QueryHelper
         }
         foreach ($find as $field => $condition) {
             // If nested JSON path, process recursively
+            // Creates a JSON path like "extra_data->field1->field2->field3"
             if (is_array($condition) && self::isAssoc($condition) && !self::containsOperator($condition)) {
                 $jsonPath = 'extra_data';
                 $sub = $condition;
@@ -35,7 +36,7 @@ class QueryHelper
                     $sub = $sub[$next];
                 }
                 $jsonPath .= '->' . implode('->', $jsonParts);
-
+                // if at the end of the path operators are used, apply them
                 if (is_array($sub)) {
                     foreach ($sub as $op => $value) {
                         self::applyOp($query, $jsonPath, $op, $value);
@@ -44,7 +45,7 @@ class QueryHelper
                     $query->where($jsonPath, $sub);
                 }
             } else {
-                // If the field is a regular column
+                // If the field is a regular column 
                 if (in_array($field, $columns)) {
                     if (is_array($condition)) {
                         foreach ($condition as $op => $value) {
@@ -55,12 +56,13 @@ class QueryHelper
                     }
                 } else {
                     // Handle JSON/JSONB fields for operators
+                    // if the field is not a regular column, assume it's in extra_data
                     if (is_array($condition)) {
                         foreach ($condition as $op => $value) {
                             $escapedField = addslashes($field);
                             $isNumeric = is_numeric($value);
                             $escapedValue = $isNumeric ? $value : '"' . addslashes($value) . '"';
-
+                            // Handle MongoDB-like operators
                             switch ($op) {
                                 case '$eq':
                                     $jsonpath = '$.**."' . $escapedField . '" ? (@ == ' . $escapedValue . ')';
