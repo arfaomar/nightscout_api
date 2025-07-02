@@ -16,15 +16,11 @@ return new class extends Migration
             $table->boolean('apiEnabled')->nullable();
             $table->boolean('carePortalEnabled')->nullable();
             $table->string('head', 255)->nullable();
-            $table->string('name', 10)->default('nightscout');
+            $table->string('name', 64)->nullable()->default('nightscout');
             $table->string('version', 255)->nullable();
-            $table->unsignedBigInteger('settings')->nullable();
-            $table->unsignedBigInteger('extendedSettings')->nullable();
-
-            // Foreign keys
-            $table->foreign('settings')->references('id')->on('settings')->onDelete("set null");
-            $table->foreign('extendedSettings')->references('id')->on('extended_settings')->onDelete("set null");
-
+            $table->jsonb('settings')->nullable();
+            $table->jsonb('extended_settings')->nullable();
+            $table->jsonb('extra_data')->nullable(); 
         });
     }
 

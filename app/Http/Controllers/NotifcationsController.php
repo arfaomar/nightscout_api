@@ -10,7 +10,7 @@ class NotificationsController extends Controller
     public function pushoverCallback(Request $request)
     {
         return response()->json([
-            'message' => 'POST /notifications/pushovercallback – empfangen (Demo)',
+            'message' => 'POST /notifications/pushovercallback received',
             'received' => $request->all()
         ]);
     }
@@ -19,8 +19,7 @@ class NotificationsController extends Controller
     public function ack(Request $request)
     {
         return response()->json([
-            'message' => 'GET /notifications/ack – Benachrichtigung bestätigt (Demo)',
-            'status' => 'acknowledged'
+            'status' => 'OK'
         ]);
     }
 }

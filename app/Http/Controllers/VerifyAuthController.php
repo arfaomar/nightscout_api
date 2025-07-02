@@ -10,12 +10,15 @@ class VerifyAuthController extends Controller
     public function index()
     {
         return response()->json([
-            'canRead' => true,
-            'canWrite' => true,
-            'isAdmin' => false,
-            'message' => 'OK',
-            'rolefound' => 'FOUND',
-            'permissions' => 'ROLE'
+            'status' => 200,
+            'message' => [
+                'canRead' => true,
+                'canWrite' => true,
+                'isAdmin' => true,
+                'message' => 'OK',
+                'rolefound' => 'FOUND',
+                'permissions' => 'ROLE'
+            ]
         ]);
     }
 }
