@@ -12,6 +12,6 @@ class DeviceStatusSeeder extends Seeder
      */
     public function run()
     {
-    \App\Models\DeviceStatus::factory()->count(1000)->create();
+        \App\Models\DeviceStatus::factory()->count(1000)->create();
     }
 }

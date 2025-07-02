@@ -9,10 +9,10 @@ class QueryHelper
 {
     /**
      * Applies Nightscout-style "find" conditions to an Eloquent query builder.
-     * 
-     * Supports MongoDB-like operators ($lt, $lte, $gt, $gte, $ne, $eq, $in, $nin, $regex) on both
-     * SQL columns and on nested fields stored in a JSON/JSONB "extra_data" column.
-     * 
+     *
+     * Supports MongoDB-like operators ($lt, $lte, $gt, $gte, $ne, $eq, $in, $nin, $regex)
+     * on both SQL columns and on nested fields stored in a JSON/JSONB column.
+     *
      * @param Builder $query The query builder instance.
      * @param array $find The find conditions as an associative array.
      * @return Builder The modified query builder.
@@ -20,12 +20,23 @@ class QueryHelper
     public static function applyNightscoutFind(Builder $query, array $find)
     {
         static $columns = null;
+        static $jsonFields = null;
+        $table = $query->getModel()->getTable();
         if ($columns === null) {
             $columns = Schema::getColumnListing($query->getModel()->getTable());
         }
+        // Dynamically determine JSON fields 
+        if ($jsonFields === null) {
+            $jsonFields = [];
+            foreach ($columns as $col) {
+                $type = Schema::getColumnType($table, $col);
+                if ($type === 'json' || $type === 'jsonb') {
+                    $jsonFields[] = $col;
+                }
+            }
+        }
         foreach ($find as $field => $condition) {
-            // If nested JSON path, process recursively
-            // Creates a JSON path like "extra_data->field1->field2->field3"
+            // If nested JSON path, process recursively (only for extra_data by default)
             if (is_array($condition) && self::isAssoc($condition) && !self::containsOperator($condition)) {
                 $jsonPath = 'extra_data';
                 $sub = $condition;
@@ -36,7 +47,7 @@ class QueryHelper
                     $sub = $sub[$next];
                 }
                 $jsonPath .= '->' . implode('->', $jsonParts);
-                // if at the end of the path operators are used, apply them
+                // If at the end of the path operators are used, apply them
                 if (is_array($sub)) {
                     foreach ($sub as $op => $value) {
                         self::applyOp($query, $jsonPath, $op, $value);
@@ -44,120 +55,142 @@ class QueryHelper
                 } else {
                     $query->where($jsonPath, $sub);
                 }
-            } else {
-                // If the field is a regular column 
-                if (in_array($field, $columns)) {
-                    if (is_array($condition)) {
-                        foreach ($condition as $op => $value) {
-                            self::applyOp($query, $field, $op, $value);
-                        }
-                    } else {
-                        $query->where($field, $condition);
+                continue;
+            }
+            // If the field is a regular column
+            if (in_array($field, $columns)) {
+                if (is_array($condition)) {
+                    foreach ($condition as $op => $value) {
+                        self::applyOp($query, $field, $op, $value);
                     }
                 } else {
-                    // Handle JSON/JSONB fields for operators
-                    // if the field is not a regular column, assume it's in extra_data
-                    if (is_array($condition)) {
-                        foreach ($condition as $op => $value) {
-                            $escapedField = addslashes($field);
-                            $isNumeric = is_numeric($value);
-                            $escapedValue = $isNumeric ? $value : '"' . addslashes($value) . '"';
-                            // Handle MongoDB-like operators
-                            switch ($op) {
-                                case '$eq':
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (@ == ' . $escapedValue . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                    $query->where($field, $condition);
+                }
+                continue;
+            }
+            //Search in all JSON fields (extra_data, pump, uploader, ...)
+            foreach ($jsonFields as $jsonField) {
+                if (is_array($condition)) {
+                    foreach ($condition as $op => $value) {
+                        $escapedField = addslashes($field);
+                        $stringValue = '"' . addslashes($value) . '"';
+                        switch ($op) {
+                            case '$eq':
+                                $jsonpathString = '$.**."' . $escapedField . '" ? (@ == ' . $stringValue . ')';
+                                $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathString')");
+                                if (is_numeric($value)) {
+                                    $jsonpathNumeric = '$.**."' . $escapedField . '" ? (@ == ' . $value . ')';
+                                    $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathNumeric')");
+                                }
+                                break;
 
-                                case '$ne':
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (@ != ' . $escapedValue . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                            case '$ne':
+                                $jsonpathString = '$.**."' . $escapedField . '" ? (@ != ' . $stringValue . ')';
+                                $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathString')");
+                                if (is_numeric($value)) {
+                                    $jsonpathNumeric = '$.**."' . $escapedField . '" ? (@ != ' . $value . ')';
+                                    $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathNumeric')");
+                                }
+                                break;
 
-                                case '$gt':
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (@ > ' . $escapedValue . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                            case '$gt':
+                                if (is_numeric($value)) {
+                                    $jsonpathNumeric = '$.**."' . $escapedField . '" ? (@ > ' . $value . ')';
+                                    $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathNumeric')");
+                                }
+                                break;
 
-                                case '$gte':
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (@ >= ' . $escapedValue . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                            case '$gte':
+                                if (is_numeric($value)) {
+                                    $jsonpathNumeric = '$.**."' . $escapedField . '" ? (@ >= ' . $value . ')';
+                                    $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathNumeric')");
+                                }
+                                break;
 
-                                case '$lt':
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (@ < ' . $escapedValue . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                            case '$lt':
+                                if (is_numeric($value)) {
+                                    $jsonpathNumeric = '$.**."' . $escapedField . '" ? (@ < ' . $value . ')';
+                                    $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathNumeric')");
+                                }
+                                break;
 
-                                case '$lte':
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (@ <= ' . $escapedValue . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                            case '$lte':
+                                if (is_numeric($value)) {
+                                    $jsonpathNumeric = '$.**."' . $escapedField . '" ? (@ <= ' . $value . ')';
+                                    $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathNumeric')");
+                                }
+                                break;
 
-                                case '$in':
-                                    if (!is_array($value)) {
-                                        $value = explode('|', $value);
+                            case '$in':
+                                if (!is_array($value)) {
+                                    $value = explode('|', $value);
+                                }
+                                $orParts = [];
+                                foreach ($value as $v) {
+                                    $orParts[] = '(@ == "' . addslashes($v) . '")';
+                                    if (is_numeric($v)) {
+                                        $orParts[] = '(@ == ' . $v . ')';
                                     }
-                                    $orParts = [];
-                                    foreach ($value as $v) {
-                                        $ev = is_numeric($v) ? $v : '"' . addslashes($v) . '"';
-                                        $orParts[] = '(@ == ' . $ev . ')';
-                                    }
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (' . implode(' || ', $orParts) . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                                }
+                                $jsonpath = '$.**."' . $escapedField . '" ? (' . implode(' || ', $orParts) . ')';
+                                $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpath')");
+                                break;
 
-                                case '$nin':
-                                    if (!is_array($value)) {
-                                        $value = explode('|', $value);
+                            case '$nin':
+                                if (!is_array($value)) {
+                                    $value = explode('|', $value);
+                                }
+                                $andParts = [];
+                                foreach ($value as $v) {
+                                    $andParts[] = '(@ != "' . addslashes($v) . '")';
+                                    if (is_numeric($v)) {
+                                        $andParts[] = '(@ != ' . $v . ')';
                                     }
-                                    $andParts = [];
-                                    foreach ($value as $v) {
-                                        $ev = is_numeric($v) ? $v : '"' . addslashes($v) . '"';
-                                        $andParts[] = '(@ != ' . $ev . ')';
-                                    }
-                                    $jsonpath = '$.**."' . $escapedField . '" ? (' . implode(' && ', $andParts) . ')';
-                                    $query->orWhereRaw("jsonb_path_exists(extra_data, '$jsonpath')");
-                                    break;
+                                }
+                                $jsonpath = '$.**."' . $escapedField . '" ? (' . implode(' && ', $andParts) . ')';
+                                $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpath')");
+                                break;
 
-                                case '$regex':
-                                    $query->orWhere('extra_data::text', 'ILIKE', '%"' . $escapedField . '":"%' . addslashes($value) . '%"');
-                                    break;
+                            case '$regex':
+                                $query->orWhere("$jsonField::text", 'ILIKE', '%"' . $escapedField . '":"%' . addslashes($value) . '%"');
+                                break;
 
-                                default:
-                                    break;
-                            }
+                            default:
+                                break;
                         }
-                    } else {
-                         // If not an array, just check for equality
-                        $query->orWhereRaw(
-                            "jsonb_path_exists(extra_data, '$.**.\"$field\" ? (@ == :find_val)')",
-                            ['find_val' => $condition]
-                        );
+                    }
+                } else {
+                    // No operator: $eq as string and, if possible, as numeric
+                    $escapedField = addslashes($field);
+                    $stringValue = '"' . addslashes($condition) . '"';
+                    $jsonpathString = '$.**."' . $escapedField . '" ? (@ == ' . $stringValue . ')';
+                    $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathString')");
+                    if (is_numeric($condition)) {
+                        $jsonpathNumeric = '$.**."' . $escapedField . '" ? (@ == ' . $condition . ')';
+                        $query->orWhereRaw("jsonb_path_exists($jsonField, '$jsonpathNumeric')");
                     }
                 }
             }
         }
         return $query;
     }
+
     /**
-     * Checks if an array is associative (not a list).
-     * 
-     * @param array $arr
-     * @return bool
+     * Checks if the array is associative (not sequential).
+     *
+     * @param array $arr The array to check.
+     * @return bool True if the array is associative, false if it is sequential.
      */
     public static function isAssoc(array $arr)
     {
         if ([] === $arr) return false;
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
-
     /**
-     * Checks if an associative array contains at least one key starting with '$'
-     * (meaning, it's using an operator syntax).
-     * 
-     * @param array $arr
-     * @return bool
+     * Checks if the array contains any MongoDB-like operator keys (starting with '$').
+     *
+     * @param array $arr The array to check.
+     * @return bool True if any key starts with '$', false otherwise.
      */
     public static function containsOperator(array $arr)
     {
@@ -166,14 +199,12 @@ class QueryHelper
         })) > 0;
     }
     /**
-     * Applies a single operator ($eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $regex)
-     * to the Eloquent query builder for the given field.
-     * 
-     * @param Builder $query
-     * @param string $field
-     * @param string $op
-     * @param mixed $value
-     * @return void
+     * Applies a single operator condition to the query.
+     *
+     * @param Builder $query The query builder instance.
+     * @param string $field The field to apply the condition on.
+     * @param string $op The operator (e.g., '$eq', '$ne', '$gt', etc.).
+     * @param mixed $value The value to compare against.
      */
     public static function applyOp($query, $field, $op, $value)
     {
@@ -209,17 +240,12 @@ class QueryHelper
                 break;
         }
     }
-
-
     /**
-     * Applies a count limit to the query, ordering by created_at descending.
-     * If $count is provided and is numeric, it limits the results to that count.
-     *  
-     *  
+     * Applies a count limit to the query, ordering by created_at in descending order.
+     *
      * @param Builder $query The query builder instance.
-     * @param int|null $count The maximum number of results to return.
-     * @return void
-     * */
+     * @param int|null $count The maximum number of records to return.
+     */
     public static function applyCount(Builder $query, $count = null)
     {
         $query->orderByDesc('created_at');

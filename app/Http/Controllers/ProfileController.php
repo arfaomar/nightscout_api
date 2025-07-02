@@ -2,91 +2,103 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use Illuminate\Http\Request;
+use App\Helpers\QueryHelper;
 
 class ProfileController extends Controller
 {
-    // GET /profile
-    public function index()
+    // GET /profiles
+    public function index(Request $request)
     {
-        return response()->json([
-            'message' => 'GET /profile – Profil angezeigt (Demo)',
-            'profile' => [
-                'defaultProfile' => 'Standard',
-                'store' => [
-                    'Standard' => [
-                        'basal' => [
-                            ['time' => '00:00', 'value' => 1.0],
-                            ['time' => '06:00', 'value' => 0.9]
-                        ],
-                        'carbratio' => 10,
-                        'sens' => 50
-                    ]
-                ]
-            ]
-        ]);
+        $query = Profile::query();
+        $find = $request->query('find', []);
+        QueryHelper::applyNightscoutFind($query, $find);
+
+        $count = $request->query('count');
+        QueryHelper::applyCount($query, $count);
+
+        $profiles = $query->get();
+
+        return response()->json($profiles);
+    }
+
+    // GET /profile
+    public function show(Request $request)
+    {
+        $profile = Profile::orderByDesc('date')->first();
+        if (!$profile) {
+            return response()->json(['message' => 'No profile found'], 404);
+        }
+        return response()->json($profile);
     }
 
     // GET /profile/current
     public function current()
     {
-        return response()->json([
-            'message' => 'GET /profile/current – aktuelles Profil (Demo)',
-            'profile' => 'Standard'
-        ]);
-    }
-
-    // GET /profiles
-    public function list()
-    {
-        return response()->json([
-            'message' => 'GET /profiles – Liste aller Profile (Demo)',
-            'profiles' => ['Standard', 'Sport', 'Krank']
-        ]);
+        $profile = Profile::orderByDesc('date')->first();
+        if (!$profile) {
+            return response()->json(['message' => 'No current profile found'], 404);
+        }
+        return response()->json($profile);
     }
 
     // POST /profile
     public function store(Request $request)
     {
         $data = $request->all();
-
-        $file = storage_path('debug/profile.json');
-
-        if (!file_exists($file)) {
-            file_put_contents($file, json_encode([]));
-        }
-
-        $existing = json_decode(file_get_contents($file), true) ?? [];
-
-
         if (is_array($data) && isset($data[0])) {
-            $existing = array_merge($existing, $data);
-        } else {
-            $existing[] = $data;
+            $data = $data[0];
+        }
+        if (!isset($data['_id'])) {
+            $data['_id'] = bin2hex(random_bytes(12));
         }
 
-        file_put_contents($file, json_encode($existing, JSON_PRETTY_PRINT));
+        if (isset($data['created_at'])) {
+            $data['created_at'] = \Carbon\Carbon::parse($data['created_at']);
+        }
+        if (isset($data['startDate'])) {
+            $data['startDate'] = \Carbon\Carbon::parse($data['startDate']);
+        }
+        $fixedFields = [
+            '_id', 'defaultProfile', 'date', 'created_at', 'startDate', 'store'
+        ];
+        $extra = collect($data)->except($fixedFields)->toArray();
+        $main = collect($data)->only($fixedFields)->toArray();
+        $main['extra_data'] = $extra;
+
+        $profile = Profile::create($main);
 
         return response()->json([
-            'message' => 'Profile gespeichert (temporär)',
-            'count' => count($existing)
-        ]);
+            'message' => 'Profile saved',
+            'id' => $profile->_id,
+        ], 201);
     }
 
     // PUT /profile
     public function update(Request $request)
     {
-        return response()->json([
-            'message' => 'PUT /profile – aktualisiert (Demo)',
-            'updated' => $request->all()
-        ]);
+        $data = $request->all();
+        $id = $data['_id'] ?? null;
+        if (!$id) {
+            return response()->json(['message' => 'Profile _id required'], 400);
+        }
+        $profile = Profile::find($id);
+        if (!$profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+        $profile->update($data);
+        return response()->json(['message' => 'Profile updated']);
     }
 
-    // DELETE /profile/{id}
+    // DELETE /profile/{_id}
     public function destroy($id)
     {
-        return response()->json([
-            'message' => "DELETE /profile/$id – gelöscht (Demo)"
-        ]);
+        $profile = Profile::find($id);
+        if (!$profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+        $profile->delete();
+        return response()->json(['message' => 'Profile deleted', 'id' => $id]);
     }
 }

@@ -9,14 +9,16 @@ class GoogleHomeController extends Controller
     // POST /googlehome
     public function handle(Request $request)
     {
+        $intent = $request->input('queryResult.intent.displayName', 'DefaultIntent');
+
+        $responseText = 'The current glucose value is 120 mg/dl.';
+        if ($intent === 'GetInsulinIntent') {
+            $responseText = 'Your last insulin intake was 2 units one hour ago.';
+        }
+
         return response()->json([
-            'message' => 'POST /googlehome – empfangen (Demo)',
-            'received' => $request->all(),
-            'response' => [
-                'speech' => 'Der aktuelle Glukosewert beträgt 120 mg/dl.',
-                'displayText' => 'Glukosewert: 120 mg/dl',
-                'source' => 'Laravel-Demo-API'
-            ]
+            'fulfillmentText' => $responseText,
+            'source' => 'Laravel-Nightscout-API'
         ]);
     }
 }

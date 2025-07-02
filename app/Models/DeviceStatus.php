@@ -24,11 +24,8 @@ class DeviceStatus extends Model
         'uploaderBattery',
         'isCharging',
         'configuration',
-        'pump_id',
         'pump',
-        'uploader_id',
         'uploader',
-        'xdripjs_id',
         'xdripjs',
         'extra_data',
     ];
@@ -41,18 +38,4 @@ class DeviceStatus extends Model
         'isCharging' => 'boolean',
         'extra_data' => 'array',
     ];
-
-
-    public function pump()
-    {
-        return $this->belongsTo(Pump::class, 'pump_id');
-    }
-    public function uploader()
-    {
-        return $this->belongsTo(Uploader::class, 'uploader_id');
-    }
-    public function xdripjs()
-    {
-        return $this->belongsTo(Xdripjs::class, 'xdripjs_id');
-    }
 }

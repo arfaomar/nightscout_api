@@ -4,148 +4,168 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Treatment;
+use App\Helpers\QueryHelper;
 
 class TreatmentController extends Controller
 {
     // GET /treatments
-    public function index()
+    public function index(Request $request)
     {
-        $treatments = Treatment::all();
+        $query = Treatment::query();
+        $find = $request->query('find', []);
+        QueryHelper::applyNightscoutFind($query, $find);
 
-        if ($treatments->isEmpty()) {
-            return response()->json([
-                'message' => 'No treatments found',
-                'count' => 0,
-                'treatments' => []
-            ]);
-        }
+        $count = $request->query('count');
+        QueryHelper::applyCount($query, $count);
 
-        return response()->json([
-            'message' => 'All treatments loaded',
-            'count' => $treatments->count(),
-            'treatments' => $treatments
-        ]);
+        $treatments = $query->get();
+
+        return response()->json($treatments);
     }
 
     // POST /treatments
     public function store(Request $request)
     {
         $data = $request->all();
-        $count = 0;
 
         if (is_array($data) && isset($data[0])) {
-            foreach ($data as &$entry) {
-                $entry['_id'] = bin2hex(random_bytes(12));
-                Treatment::create($entry);
-                $count++;
+            $responses = [];
+            foreach ($data as $item) {
+                if (!isset($item['_id'])) {
+                    $item['_id'] = bin2hex(random_bytes(12));
+                }
+                if (isset($item['created_at'])) {
+                    $item['created_at'] = \Carbon\Carbon::parse($item['created_at'])->format('Y-m-d H:i:s');
+                }
+                $fixedFields = [
+                    '_id',
+                    'eventType',
+                    'created_at',
+                    'glucose',
+                    'glucoseType',
+                    'carbs',
+                    'protein',
+                    'fat',
+                    'insulin',
+                    'units',
+                    'transmitterId',
+                    'sensorCode',
+                    'notes',
+                    'enteredBy'
+                ];
+                $extra = collect($item)->except($fixedFields)->toArray();
+                $main = collect($item)->only($fixedFields)->toArray();
+                $main['extra_data'] = $extra;
+
+                $responses[] = Treatment::create($main);
             }
-        } else {
-            $data['_id'] = bin2hex(random_bytes(12));
-            Treatment::create($data);
-            $count = 1;
+            return response()->json($responses, 201);
         }
 
-        return response()->json([
-            'message' => 'Treatments saved',
-            'count' => $count
-        ]);
+        if (!isset($data['_id'])) {
+            $data['_id'] = bin2hex(random_bytes(12));
+        }
+        if (isset($data['created_at'])) {
+            $data['created_at'] = \Carbon\Carbon::parse($data['created_at'])->format('Y-m-d H:i:s');
+        }
+        $fixedFields = [
+            '_id',
+            'eventType',
+            'created_at',
+            'glucose',
+            'glucoseType',
+            'carbs',
+            'protein',
+            'fat',
+            'insulin',
+            'units',
+            'transmitterId',
+            'sensorCode',
+            'notes',
+            'enteredBy'
+        ];
+        $extra = collect($data)->except($fixedFields)->toArray();
+        $main = collect($data)->only($fixedFields)->toArray();
+        $main['extra_data'] = $extra;
+
+        $treatment = Treatment::create($main);
+
+        return response()->json($treatment, 201);
     }
 
-    // PUT /treatments 
+
+    // PUT /treatments
     public function update(Request $request)
     {
         $data = $request->all();
-        $count = 0;
-
-        if (isset($data['_id'])) {
-            $treatment = Treatment::where('_id', $data['_id'])->first();
-
-            if ($treatment) {
-                $treatment->update($data);
-                $message = 'Treatment updated';
-                $count = 1;
-            } else {
-                Treatment::create($data);
-                $message = 'New treatment created';
-                $count = 1;
-            }
-        } else {
-            $data['_id'] = bin2hex(random_bytes(12));
-            Treatment::create($data);
-            $message = 'New treatment created (with generated _id)';
-            $count = 1;
+        if (!isset($data['_id'])) {
+            return response()->json(['error' => 'No _id specified'], 400);
+        }
+        $treatment = Treatment::find($data['_id']);
+        if (!$treatment) {
+            return response()->json(['error' => 'Treatment not found'], 404);
         }
 
+        // Update Main-Fields
+        $fixedFields = [
+            '_id',
+            'eventType',
+            'created_at',
+            'glucose',
+            'glucoseType',
+            'carbs',
+            'protein',
+            'fat',
+            'insulin',
+            'units',
+            'transmitterId',
+            'sensorCode',
+            'notes',
+            'enteredBy'
+        ];
+        $main = collect($data)->only($fixedFields)->toArray();
+        $extra = collect($data)->except($fixedFields)->toArray();
+
+        $treatment->fill($main);
+        $treatment->extra_data = $extra;
+        $treatment->save();
+
+        return response()->json($treatment);
+    }
+
+    // DELETE /treatments/{id}
+    public function destroySpec($id)
+    {
+        $treatment = Treatment::find($id);
+        if (!$treatment) {
+            return response()->json(['message' => 'Treatment not found'], 404);
+        }
+        $treatment->delete();
         return response()->json([
-            'message' => $message,
-            'count' => $count,
-            'treatment' => $data
+            'message' => 'Treatment deleted',
+            'id' => $id
         ]);
     }
 
     // DELETE /treatments
     public function destroy(Request $request)
     {
-        $find = $request->query('find', []);
         $query = Treatment::query();
+        $find = $request->query('find', []);
+        QueryHelper::applyNightscoutFind($query, $find);
 
-        foreach ($find as $field => $condition) {
-            if (is_array($condition)) {
-                foreach ($condition as $op => $value) {
-                    switch ($op) {
-                        case '$lt':
-                            $query->where($field, '<', $value);
-                            break;
-                        case '$lte':
-                            $query->where($field, '<=', $value);
-                            break;
-                        case '$gt':
-                            $query->where($field, '>', $value);
-                            break;
-                        case '$gte':
-                            $query->where($field, '>=', $value);
-                            break;
-                    }
-                }
-            } else {
-                $query->where($field, $condition);
-            }
-        }
-
-        $count = $query->delete();
-
+        $count = $query->count();
         if ($count === 0) {
             return response()->json([
-                'message' => 'No matching treatments found. Nothing deleted',
-                'count' => 0,
-                ], 
-                404);
-        }
-
-        return response()->json([
-            'message' => 'Treatments deleted',
-            'count' => $count
-        ]);
-    }
-
-    // DELETE /treatments/{spec}
-    public function destroySpec($spec)
-    {
-        $treatment = Treatment::where('_id', $spec)->first();
-
-        if (!$treatment) {
-            return response()->json(['message' => 'Treatment not found',
-                'count' => 0,
-                'treatment' => null
+                'message' => 'No matching Treatment found. Nothing deleted.',
+                'deleted' => 0
             ], 404);
         }
 
-        $count = $treatment->delete();
-
+        $deleted = $query->delete();
         return response()->json([
-            'message' => "Treatment with ID: $spec deleted",
-            'count' => $count,
-            'id' => $spec
+            'message' => 'Treatments deleted',
+            'deleted' => $deleted
         ]);
     }
 }

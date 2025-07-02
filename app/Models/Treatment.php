@@ -31,5 +31,9 @@ class Treatment extends Model
         'sensorCode',
         'notes',
         'enteredBy',
+        'extra_data',
+    ];
+    protected $casts = [
+        'extra_data' => 'array', 
     ];
 }

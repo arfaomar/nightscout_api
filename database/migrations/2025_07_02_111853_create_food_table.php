@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pump_batteries', function (Blueprint $table) {
-        $table->id();
-        $table->string('status')->nullable();
-        $table->float('voltage')->nullable();
+        Schema::create('foods', function (Blueprint $table) {
+        $table->string('_id', 24)->primary();
+        $table->timestamp('created_at')->nullable();
+        $table->jsonb('extra_data')->nullable();
     });
     }
 
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pump_batteries');
+        Schema::dropIfExists('food');
     }
 };

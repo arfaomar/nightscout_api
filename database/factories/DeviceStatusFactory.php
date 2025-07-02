@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -36,13 +37,13 @@ class DeviceStatusFactory extends Factory
             'uploaderBattery' => $this->faker->numberBetween(20, 100),
             'isCharging' => $this->faker->boolean(),
             'configuration' => [],
-            'pump_id' => null,
-            'pump' => [],
-            'uploader_id' => null,
+            'pump' => $this->faker->boolean() ? [
+                'id' => Str::random(8),
+                'status' => $this->faker->randomElement(['active', 'inactive']),
+            ] : [],
             'uploader' => [],
-            'xdripjs_id' => null,
             'xdripjs' => [],
-            'extra_data' => $extraFields, 
+            'extra_data' => $extraFields,
         ];
     }
 }

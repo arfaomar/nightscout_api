@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('entries', function (Blueprint $table) {
-            $table->id();
+            $table->string('_id', 24)->primary();  
+            $table->timestamp('created_at')->nullable();
             $table->string('type');
             $table->timestamp('dateString');
             $table->bigInteger('date');
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->float('filtered')->nullable();
             $table->float('unfiltered')->nullable();
             $table->float('rssi')->nullable();
+            $table->jsonb('extra_data')->nullable();
         });
     }
 

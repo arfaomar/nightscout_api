@@ -15,24 +15,14 @@ return new class extends Migration
             $table->string('_id', 24)->primary();
             $table->string('device', 255)->nullable();
             $table->timestamp('created_at')->nullable();
-            $table->json('openaps')->nullable();
-            $table->json('loop')->nullable();
+            $table->jsonb('openaps')->nullable();
+            $table->jsonb('loop')->nullable();
             $table->integer('uploaderBattery')->nullable();
             $table->boolean('isCharging')->default(false);
-            $table->json('configuration')->nullable();
-
-            $table->unsignedBigInteger('pump_id')->nullable();
-            $table->foreign('pump_id')->references('id')->on('pumps')->onDelete('set null');
-            $table->json('pump')->nullable();
-
-            $table->unsignedBigInteger('uploader_id')->nullable();
-            $table->foreign('uploader_id')->references('id')->on('uploaders')->onDelete('set null');
-            $table->json('uploader')->nullable();
-
-            $table->unsignedBigInteger('xdripjs_id')->nullable();
-            $table->foreign('xdripjs_id')->references('id')->on('xdripjs')->onDelete('set null');
-            $table->json('xdripjs')->nullable();
-
+            $table->jsonb('configuration')->nullable();
+            $table->jsonb('pump')->nullable();
+            $table->jsonb('uploader')->nullable();
+            $table->jsonb('xdripjs')->nullable();
             $table->jsonb('extra_data')->nullable();
         });
     }
