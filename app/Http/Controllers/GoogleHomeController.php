@@ -18,7 +18,7 @@ class GoogleHomeController extends Controller
 
         return response()->json([
             'fulfillmentText' => $responseText,
-            'source' => 'Laravel-Nightscout-API'
+            'source' => 'Laravel-Nightscout-API',
         ]);
     }
 }

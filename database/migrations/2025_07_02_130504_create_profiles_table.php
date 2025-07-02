@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->string('_id', 24)->primary();
             $table->string('defaultProfile')->nullable();
-            $table->bigInteger('date')->nullable(); 
+            $table->bigInteger('date')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('startDate')->nullable();
             $table->jsonb('store')->nullable();

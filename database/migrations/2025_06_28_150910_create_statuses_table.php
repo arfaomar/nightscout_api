@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('version', 255)->nullable();
             $table->jsonb('settings')->nullable();
             $table->jsonb('extended_settings')->nullable();
-            $table->jsonb('extra_data')->nullable(); 
+            $table->jsonb('extra_data')->nullable();
         });
     }
 

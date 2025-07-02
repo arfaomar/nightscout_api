@@ -28,7 +28,7 @@ class AlexaController extends Controller
                             'text' => $msg,
                         ],
                         'shouldEndSession' => true,
-                    ]
+                    ],
                 ]);
             }
         }
@@ -41,7 +41,7 @@ class AlexaController extends Controller
                     'text' => 'Sorry, I did not understand your request.',
                 ],
                 'shouldEndSession' => true,
-            ]
+            ],
         ]);
     }
 }

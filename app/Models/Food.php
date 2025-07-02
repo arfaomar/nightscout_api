@@ -10,9 +10,13 @@ class Food extends Model
     use HasFactory;
 
     protected $table = 'foods';
+
     protected $primaryKey = '_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
 
     protected $fillable = [

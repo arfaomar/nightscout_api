@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QueryHelper;
 use App\Models\DeviceStatus;
 use Illuminate\Http\Request;
-use App\Helpers\QueryHelper;
-use Illuminate\Support\Facades\Log;
 
 class DeviceStatusController extends Controller
 {
@@ -24,8 +23,6 @@ class DeviceStatusController extends Controller
         return response()->json($statuses);
     }
 
-
-
     // POST /devicestatus
     public function store(Request $request)
     {
@@ -35,7 +32,7 @@ class DeviceStatusController extends Controller
             $data = $data[0];
         }
 
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             $data['_id'] = bin2hex(random_bytes(12));
         }
 
@@ -45,7 +42,7 @@ class DeviceStatusController extends Controller
 
         foreach (['pump', 'openaps', 'configuration', 'loop', 'uploader', 'xdripjs'] as $jsonField) {
             if (isset($data[$jsonField])) {
-                if (empty($data[$jsonField]) || $data[$jsonField] === "") {
+                if (empty($data[$jsonField]) || $data[$jsonField] === '') {
                     $data[$jsonField] = null;
                 }
             }
@@ -62,7 +59,7 @@ class DeviceStatusController extends Controller
             'configuration',
             'pump',
             'uploader',
-            'xdripjs'
+            'xdripjs',
         ];
 
         $extra = collect($data)->except($fixedFields)->toArray();
@@ -78,8 +75,6 @@ class DeviceStatusController extends Controller
         ], 201);
     }
 
-
-
     // DELETE /devicestatus
     public function destroy(Request $request)
     {
@@ -91,7 +86,7 @@ class DeviceStatusController extends Controller
         if ($count === 0) {
             return response()->json([
                 'message' => 'No matching DeviceStatus found. Nothing deleted.',
-                'deleted' => 0
+                'deleted' => 0,
             ], 404);
         }
 
@@ -99,22 +94,22 @@ class DeviceStatusController extends Controller
 
         return response()->json([
             'message' => 'DeviceStatus deleted',
-            'deleted' => $deleted
+            'deleted' => $deleted,
         ]);
     }
-
 
     // DELETE /devicestatus/{spec}
     public function destroySpec($spec)
     {
         $status = DeviceStatus::find($spec);
-        if (!$status) {
+        if (! $status) {
             return response()->json(['message' => 'DeviceStatus not found'], 404);
         }
         $status->delete();
+
         return response()->json([
             'message' => 'DeviceStatus deleted',
-            'id' => $spec
+            'id' => $spec,
         ]);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QueryHelper;
 use App\Models\Food;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Helpers\QueryHelper;
 
 class FoodController extends Controller
 {
@@ -31,6 +31,7 @@ class FoodController extends Controller
     public function quickpicks(Request $request)
     {
         $foods = Food::where('extra_data->category', 'quickpick')->get();
+
         return response()->json($foods);
     }
 
@@ -38,6 +39,7 @@ class FoodController extends Controller
     public function regular(Request $request)
     {
         $foods = Food::where('extra_data->category', 'regular')->get();
+
         return response()->json($foods);
     }
 
@@ -46,7 +48,7 @@ class FoodController extends Controller
     {
         $data = $request->all();
 
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             $data['_id'] = Str::random(24);
         }
 
@@ -71,12 +73,12 @@ class FoodController extends Controller
     {
         $data = $request->all();
 
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             return response()->json(['message' => 'Missing _id'], 400);
         }
 
         $food = Food::find($data['_id']);
-        if (!$food) {
+        if (! $food) {
             return response()->json(['message' => 'Food not found'], 404);
         }
 
@@ -94,10 +96,11 @@ class FoodController extends Controller
     public function destroy($id)
     {
         $food = Food::find($id);
-        if (!$food) {
+        if (! $food) {
             return response()->json(['message' => 'Food not found'], 404);
         }
         $food->delete();
-        return response()->json(['message' => "Food deleted", 'id' => $id]);
+
+        return response()->json(['message' => 'Food deleted', 'id' => $id]);
     }
 }

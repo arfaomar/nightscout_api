@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\DeviceStatus;
 use Illuminate\Database\Seeder;
 
 class DeviceStatusSeeder extends Seeder
@@ -12,6 +12,6 @@ class DeviceStatusSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\DeviceStatus::factory()->count(1000)->create();
+        DeviceStatus::factory()->count(1000)->create();
     }
 }

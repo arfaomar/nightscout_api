@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QueryHelper;
 use App\Models\Entry;
 use Illuminate\Http\Request;
-use App\Helpers\QueryHelper;
 
 class EntryController extends Controller
 {
@@ -32,7 +32,7 @@ class EntryController extends Controller
             $data = $data[0];
         }
 
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             $data['_id'] = bin2hex(random_bytes(12));
         }
 
@@ -62,7 +62,7 @@ class EntryController extends Controller
 
         return response()->json([
             'message' => 'Entry saved',
-            'id' => $entry->_id ?? $entry->id, 
+            'id' => $entry->_id ?? $entry->id,
         ], 201);
     }
 
@@ -77,7 +77,7 @@ class EntryController extends Controller
         if ($count === 0) {
             return response()->json([
                 'message' => 'No matching entries found. Nothing deleted.',
-                'deleted' => 0
+                'deleted' => 0,
             ], 404);
         }
 
@@ -85,7 +85,7 @@ class EntryController extends Controller
 
         return response()->json([
             'message' => 'Entries deleted',
-            'deleted' => $deleted
+            'deleted' => $deleted,
         ]);
     }
 
@@ -93,31 +93,36 @@ class EntryController extends Controller
     public function destroySpec($spec)
     {
         $entry = Entry::find($spec);
-        if (!$entry) {
+        if (! $entry) {
             return response()->json(['message' => 'Entry not found'], 404);
         }
         $entry->delete();
+
         return response()->json([
             'message' => 'Entry deleted',
-            'id' => $spec
+            'id' => $spec,
         ]);
     }
+
     // GET /entries/current
     public function current()
     {
         $entry = Entry::orderByDesc('date')->first();
-        if (!$entry) {
+        if (! $entry) {
             return response()->json(['message' => 'No entry found'], 404);
         }
+
         return response()->json($entry);
     }
+
     // GET /entries/{spec}
     public function show($spec)
     {
         $entry = Entry::find($spec);
-        if (!$entry) {
+        if (! $entry) {
             return response()->json(['message' => 'Entry not found'], 404);
         }
+
         return response()->json($entry);
     }
 
@@ -126,7 +131,7 @@ class EntryController extends Controller
     {
         return response()->json([
             'message' => 'Entries validated (preview)',
-            'validated' => $request->all()
+            'validated' => $request->all(),
         ]);
     }
 }

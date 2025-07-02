@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QueryHelper;
 use App\Models\Profile;
 use Illuminate\Http\Request;
-use App\Helpers\QueryHelper;
 
 class ProfileController extends Controller
 {
@@ -27,9 +27,10 @@ class ProfileController extends Controller
     public function show(Request $request)
     {
         $profile = Profile::orderByDesc('date')->first();
-        if (!$profile) {
+        if (! $profile) {
             return response()->json(['message' => 'No profile found'], 404);
         }
+
         return response()->json($profile);
     }
 
@@ -37,9 +38,10 @@ class ProfileController extends Controller
     public function current()
     {
         $profile = Profile::orderByDesc('date')->first();
-        if (!$profile) {
+        if (! $profile) {
             return response()->json(['message' => 'No current profile found'], 404);
         }
+
         return response()->json($profile);
     }
 
@@ -50,7 +52,7 @@ class ProfileController extends Controller
         if (is_array($data) && isset($data[0])) {
             $data = $data[0];
         }
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             $data['_id'] = bin2hex(random_bytes(12));
         }
 
@@ -61,7 +63,7 @@ class ProfileController extends Controller
             $data['startDate'] = \Carbon\Carbon::parse($data['startDate']);
         }
         $fixedFields = [
-            '_id', 'defaultProfile', 'date', 'created_at', 'startDate', 'store'
+            '_id', 'defaultProfile', 'date', 'created_at', 'startDate', 'store',
         ];
         $extra = collect($data)->except($fixedFields)->toArray();
         $main = collect($data)->only($fixedFields)->toArray();
@@ -80,14 +82,15 @@ class ProfileController extends Controller
     {
         $data = $request->all();
         $id = $data['_id'] ?? null;
-        if (!$id) {
+        if (! $id) {
             return response()->json(['message' => 'Profile _id required'], 400);
         }
         $profile = Profile::find($id);
-        if (!$profile) {
+        if (! $profile) {
             return response()->json(['message' => 'Profile not found'], 404);
         }
         $profile->update($data);
+
         return response()->json(['message' => 'Profile updated']);
     }
 
@@ -95,10 +98,11 @@ class ProfileController extends Controller
     public function destroy($id)
     {
         $profile = Profile::find($id);
-        if (!$profile) {
+        if (! $profile) {
             return response()->json(['message' => 'Profile not found'], 404);
         }
         $profile->delete();
+
         return response()->json(['message' => 'Profile deleted', 'id' => $id]);
     }
 }

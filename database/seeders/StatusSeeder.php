@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Status;
 use Illuminate\Database\Seeder;
 
 class StatusSeeder extends Seeder
@@ -12,6 +12,6 @@ class StatusSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Status::factory()->count(10)->create();
+        Status::factory()->count(10)->create();
     }
 }

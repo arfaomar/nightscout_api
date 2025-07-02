@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Status;
 
 class StatusController extends Controller
@@ -12,7 +11,7 @@ class StatusController extends Controller
     {
         $status = Status::first();
 
-        if (!$status) {
+        if (! $status) {
             return response()->json([
                 'status' => 'ok',
                 'name' => 'nightscout',
@@ -22,10 +21,10 @@ class StatusController extends Controller
                 'apiEnabled' => true,
                 'careportalEnabled' => true,
                 'boluscalcEnabled' => false,
-                'settings' => new \stdClass(),
-                'extendedSettings' => new \stdClass(),
+                'settings' => new \stdClass,
+                'extendedSettings' => new \stdClass,
                 'authorized' => null,
-                'runtimeState' => "loaded",
+                'runtimeState' => 'loaded',
             ]);
         }
 
@@ -38,10 +37,10 @@ class StatusController extends Controller
             'apiEnabled' => $status->apiEnabled ?? true,
             'careportalEnabled' => $status->carePortalEnabled ?? true,
             'boluscalcEnabled' => $status->boluscalcEnabled ?? false,
-            'settings' => $status->settings ?? new \stdClass(),
-            'extendedSettings' => $status->extended_settings ?? new \stdClass(),
+            'settings' => $status->settings ?? new \stdClass,
+            'extendedSettings' => $status->extended_settings ?? new \stdClass,
             'authorized' => $status->authorized ?? null,
-            'runtimeState' => $status->runtimeState ?? "loaded",
+            'runtimeState' => $status->runtimeState ?? 'loaded',
         ]);
     }
 }

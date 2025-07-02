@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Treatment;
 use App\Helpers\QueryHelper;
+use App\Models\Treatment;
+use Illuminate\Http\Request;
 
 class TreatmentController extends Controller
 {
@@ -31,7 +31,7 @@ class TreatmentController extends Controller
         if (is_array($data) && isset($data[0])) {
             $responses = [];
             foreach ($data as $item) {
-                if (!isset($item['_id'])) {
+                if (! isset($item['_id'])) {
                     $item['_id'] = bin2hex(random_bytes(12));
                 }
                 if (isset($item['created_at'])) {
@@ -51,7 +51,7 @@ class TreatmentController extends Controller
                     'transmitterId',
                     'sensorCode',
                     'notes',
-                    'enteredBy'
+                    'enteredBy',
                 ];
                 $extra = collect($item)->except($fixedFields)->toArray();
                 $main = collect($item)->only($fixedFields)->toArray();
@@ -59,10 +59,11 @@ class TreatmentController extends Controller
 
                 $responses[] = Treatment::create($main);
             }
+
             return response()->json($responses, 201);
         }
 
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             $data['_id'] = bin2hex(random_bytes(12));
         }
         if (isset($data['created_at'])) {
@@ -82,7 +83,7 @@ class TreatmentController extends Controller
             'transmitterId',
             'sensorCode',
             'notes',
-            'enteredBy'
+            'enteredBy',
         ];
         $extra = collect($data)->except($fixedFields)->toArray();
         $main = collect($data)->only($fixedFields)->toArray();
@@ -93,16 +94,15 @@ class TreatmentController extends Controller
         return response()->json($treatment, 201);
     }
 
-
     // PUT /treatments
     public function update(Request $request)
     {
         $data = $request->all();
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             return response()->json(['error' => 'No _id specified'], 400);
         }
         $treatment = Treatment::find($data['_id']);
-        if (!$treatment) {
+        if (! $treatment) {
             return response()->json(['error' => 'Treatment not found'], 404);
         }
 
@@ -121,7 +121,7 @@ class TreatmentController extends Controller
             'transmitterId',
             'sensorCode',
             'notes',
-            'enteredBy'
+            'enteredBy',
         ];
         $main = collect($data)->only($fixedFields)->toArray();
         $extra = collect($data)->except($fixedFields)->toArray();
@@ -137,13 +137,14 @@ class TreatmentController extends Controller
     public function destroySpec($id)
     {
         $treatment = Treatment::find($id);
-        if (!$treatment) {
+        if (! $treatment) {
             return response()->json(['message' => 'Treatment not found'], 404);
         }
         $treatment->delete();
+
         return response()->json([
             'message' => 'Treatment deleted',
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
@@ -158,14 +159,15 @@ class TreatmentController extends Controller
         if ($count === 0) {
             return response()->json([
                 'message' => 'No matching Treatment found. Nothing deleted.',
-                'deleted' => 0
+                'deleted' => 0,
             ], 404);
         }
 
         $deleted = $query->delete();
+
         return response()->json([
             'message' => 'Treatments deleted',
-            'deleted' => $deleted
+            'deleted' => $deleted,
         ]);
     }
 }

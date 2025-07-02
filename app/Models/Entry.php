@@ -10,9 +10,13 @@ class Entry extends Model
     use HasFactory;
 
     protected $table = 'entries';
+
     protected $primaryKey = '_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NotificationsController extends Controller
 {
     // POST /notifications/pushovercallback
-    public function pushoverCallback(Request $request)
+    public function pushoverCallback(Request $request): JsonResponse
     {
         return response()->json([
             'message' => 'POST /notifications/pushovercallback received',
-            'received' => $request->all()
+            'received' => $request->all(),
         ]);
     }
 
     // GET /notifications/ack
-    public function ack(Request $request)
+    public function ack(Request $request): JsonResponse
     {
         return response()->json([
-            'status' => 'OK'
+            'status' => 'OK',
         ]);
     }
 }

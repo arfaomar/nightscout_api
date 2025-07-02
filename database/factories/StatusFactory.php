@@ -40,8 +40,8 @@ class StatusFactory extends Factory
                 'meta' => [
                     'created_by' => $this->faker->userName(),
                     'updated_at' => $this->faker->dateTimeThisYear()->format('Y-m-d H:i:s'),
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

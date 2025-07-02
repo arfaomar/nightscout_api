@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QueryHelper;
 use App\Models\Activity;
 use Illuminate\Http\Request;
-use App\Helpers\QueryHelper;
 
 class ActivityController extends Controller
 {
@@ -30,7 +30,7 @@ class ActivityController extends Controller
         if (is_array($data) && isset($data[0])) {
             $results = [];
             foreach ($data as $item) {
-                if (!isset($item['_id'])) {
+                if (! isset($item['_id'])) {
                     $item['_id'] = bin2hex(random_bytes(12));
                 }
                 if (isset($item['created_at'])) {
@@ -49,9 +49,10 @@ class ActivityController extends Controller
                 $main['extra_data'] = $extra;
                 $results[] = Activity::create($main);
             }
+
             return response()->json($results, 201);
         } else {
-            if (!isset($data['_id'])) {
+            if (! isset($data['_id'])) {
                 $data['_id'] = bin2hex(random_bytes(12));
             }
             if (isset($data['created_at'])) {
@@ -69,6 +70,7 @@ class ActivityController extends Controller
             $main = collect($data)->only($fixedFields)->toArray();
             $main['extra_data'] = $extra;
             $activity = Activity::create($main);
+
             return response()->json($activity, 201);
         }
     }
@@ -77,12 +79,12 @@ class ActivityController extends Controller
     public function update(Request $request)
     {
         $data = $request->all();
-        if (!isset($data['_id'])) {
+        if (! isset($data['_id'])) {
             return response()->json(['message' => 'Missing _id'], 400);
         }
 
         $activity = Activity::find($data['_id']);
-        if (!$activity) {
+        if (! $activity) {
             return response()->json(['message' => 'Activity not found'], 404);
         }
 
@@ -107,10 +109,11 @@ class ActivityController extends Controller
     public function destroy($id)
     {
         $activity = Activity::find($id);
-        if (!$activity) {
+        if (! $activity) {
             return response()->json(['message' => 'Activity not found'], 404);
         }
         $activity->delete();
-        return response()->json(['message' => "Activity deleted", 'id' => $id]);
+
+        return response()->json(['message' => 'Activity deleted', 'id' => $id]);
     }
 }

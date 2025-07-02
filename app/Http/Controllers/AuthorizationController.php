@@ -3,16 +3,15 @@
 namespace App\Http\Controllers;
 
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 
 class AuthorizationController extends Controller
 {
     public function requestToken(Request $request, $apiSecret)
     {
-        $expectedHash = hash("sha512", env('API_SECRET'));
+        $expectedHash = hash('sha512', env('API_SECRET'));
 
-        if (hash("sha512", $apiSecret) !== $expectedHash) {
+        if (hash('sha512', $apiSecret) !== $expectedHash) {
             return response()->json(['message' => 'Invalid API Secret'], 403);
         }
 
@@ -23,7 +22,7 @@ class AuthorizationController extends Controller
             'iss' => 'NightscoutMiddleware', // Author
             'sub' => $userIp, // user id
             'iat' => time(), // Creation time
-            'exp' => time() + 3600 // (1 Hour)
+            'exp' => time() + 3600, // (1 Hour)
         ];
 
         // JWT generieren
@@ -34,10 +33,10 @@ class AuthorizationController extends Controller
             'sub' => 'admin', // user id
             'permissionGroups' => [
                 ['*'],
-                ['*:*:read']
+                ['*:*:read'],
             ],
             'iat' => $payload['iat'],
-            'exp' => $payload['exp']
+            'exp' => $payload['exp'],
         ]);
     }
 }

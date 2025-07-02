@@ -10,9 +10,13 @@ class DeviceStatus extends Model
     use HasFactory;
 
     protected $table = 'device_statuses';
+
     protected $primaryKey = '_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     public $timestamps = false;
 
     protected $fillable = [

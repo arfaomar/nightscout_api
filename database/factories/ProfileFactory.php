@@ -11,7 +11,7 @@ class ProfileFactory extends Factory
 
     public function definition()
     {
-        $profileName = 'LocalProfile' . $this->faker->randomNumber(3);
+        $profileName = 'LocalProfile'.$this->faker->randomNumber(3);
 
         return [
             '_id' => Str::random(24),
@@ -23,23 +23,23 @@ class ProfileFactory extends Factory
                 $profileName => [
                     'dia' => 5,
                     'carbratio' => [
-                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 5]
+                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 5],
                     ],
                     'sens' => [
-                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 5]
+                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 5],
                     ],
                     'basal' => [
-                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 5]
+                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 5],
                     ],
                     'target_low' => [
-                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 80]
+                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 80],
                     ],
                     'target_high' => [
-                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 108]
+                        ['time' => '00:00', 'timeAsSeconds' => 0, 'value' => 108],
                     ],
                     'units' => 'mg/dl',
-                    'timezone' => 'GMT'
-                ]
+                    'timezone' => 'GMT',
+                ],
             ],
             'extra_data' => [],
         ];

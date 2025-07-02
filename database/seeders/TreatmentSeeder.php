@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Treatment;
 use Illuminate\Database\Seeder;
 
 class TreatmentSeeder extends Seeder
@@ -12,6 +12,6 @@ class TreatmentSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Treatment::factory()->count(1000)->create();
+        Treatment::factory()->count(1000)->create();
     }
 }

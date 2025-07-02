@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable();
             $table->text('notes')->nullable();
             $table->string('enteredBy', 255)->nullable();
-            $table->jsonb('extra_data')->nullable(); 
+            $table->jsonb('extra_data')->nullable();
         });
     }
 

@@ -13,10 +13,10 @@ class DeviceStatusFactory extends Factory
     {
         $extraFields = [
             'firmwareVersion' => $this->faker->randomElement(['1.0', '1.2.3', '2.0']),
-            'batteryHealth'   => $this->faker->randomElement(['good', 'normal', 'bad']),
-            'customFlag'      => $this->faker->boolean(),
-            'randomText'      => $this->faker->sentence(),
-            'meta'            => [
+            'batteryHealth' => $this->faker->randomElement(['good', 'normal', 'bad']),
+            'customFlag' => $this->faker->boolean(),
+            'randomText' => $this->faker->sentence(),
+            'meta' => [
                 'code' => $this->faker->randomNumber(3),
                 'desc' => $this->faker->word(),
                 'test' => [
@@ -24,10 +24,10 @@ class DeviceStatusFactory extends Factory
                     'array' => [
                         $this->faker->word(),
                         $this->faker->word(),
-                        $this->faker->word()
-                    ]
-                ]
-            ]
+                        $this->faker->word(),
+                    ],
+                ],
+            ],
         ];
 
         return [

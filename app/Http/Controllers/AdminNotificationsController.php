@@ -13,8 +13,8 @@ class AdminNotificationsController extends Controller
             'status' => 200,
             'message' => [
                 'notifies' => [],
-                'notifyCount' => 2
-            ]
+                'notifyCount' => 2,
+            ],
         ]);
     }
 }

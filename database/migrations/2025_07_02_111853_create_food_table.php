@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('foods', function (Blueprint $table) {
-        $table->string('_id', 24)->primary();
-        $table->timestamp('created_at')->nullable();
-        $table->jsonb('extra_data')->nullable();
-    });
+            $table->string('_id', 24)->primary();
+            $table->timestamp('created_at')->nullable();
+            $table->jsonb('extra_data')->nullable();
+        });
     }
 
     /**

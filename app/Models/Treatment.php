@@ -10,11 +10,14 @@ class Treatment extends Model
     use HasFactory;
 
     protected $table = 'treatments';
-    protected $primaryKey = '_id';
-    public $incrementing = false;
-    protected $keyType = 'string';
-    public $timestamps = false;
 
+    protected $primaryKey = '_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected $fillable = [
         '_id',
@@ -33,7 +36,8 @@ class Treatment extends Model
         'enteredBy',
         'extra_data',
     ];
+
     protected $casts = [
-        'extra_data' => 'array', 
+        'extra_data' => 'array',
     ];
 }

@@ -1,21 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EntryController;
-use App\Http\Controllers\TreatmentController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\StatusController;
-use App\Http\Controllers\DeviceStatusController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AdminNotificationsController;
 use App\Http\Controllers\AlexaController;
+use App\Http\Controllers\AuthorizationController;
+use App\Http\Controllers\DeviceStatusController;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExperimentsController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\GoogleHomeController;
 use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RootController;
+use App\Http\Controllers\StatusController;
+use App\Http\Controllers\TreatmentController;
 use App\Http\Controllers\VerifyAuthController;
-use App\Http\Controllers\AuthorizationController;
+use Illuminate\Support\Facades\Route;
 
 // This group applies the ApiAuthMiddleware to all routes defined within it
 Route::group(['middleware' => ['apiAuth']], function () {
@@ -64,7 +64,6 @@ Route::group(['middleware' => ['apiAuth']], function () {
 
     // Experiments
     Route::get('/test', [ExperimentsController::class, 'test']);
-
 
     // Food
     Route::get('/food', [FoodController::class, 'index']);
