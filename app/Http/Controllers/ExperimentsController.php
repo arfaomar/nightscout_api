@@ -10,8 +10,7 @@ class ExperimentsController extends Controller
     public function test()
     {
         return response()->json([
-            'status' => 'ok',
-            'message' => 'GET /test – funktioniert (Demo)'
+            'status' => 'ok'
         ]);
     }
 }

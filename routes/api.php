@@ -19,8 +19,8 @@ use App\Http\Controllers\AuthorizationController;
 
 // Entries
 Route::get('/entries', [EntryController::class, 'index']);
-Route::get('/entries/{spec}', [EntryController::class, 'show']);
 Route::get('/entries/current', [EntryController::class, 'current']);
+Route::get('/entries/{spec}', [EntryController::class, 'show']);
 Route::post('/entries', [EntryController::class, 'store']);
 Route::post('/entries/preview', [EntryController::class, 'preview']);
 Route::delete('/entries/{spec}', [EntryController::class, 'destroySpec']);
@@ -35,9 +35,9 @@ Route::delete('/treatments', [TreatmentController::class, 'destroy']);
 Route::delete('/treatments/{spec}', [TreatmentController::class, 'destroySpec']);
 
 // Profile
-Route::get('/profile', [ProfileController::class, 'index']);
-Route::get('/profile/current', [ProfileController::class, 'current']);
-Route::get('/profiles', [ProfileController::class, 'list']);
+Route::get('/profiles', [ProfileController::class, 'index']);
+Route::get('/profile', [ProfileController::class, 'show']);
+Route::get('/profile/current', [ProfileController::class, 'current']); 
 Route::post('/profile', [ProfileController::class, 'store']);
 Route::put('/profile', [ProfileController::class, 'update']);
 Route::delete('/profile/{id}', [ProfileController::class, 'destroy']);
