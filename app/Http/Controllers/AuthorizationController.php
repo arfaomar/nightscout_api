@@ -10,7 +10,9 @@ class AuthorizationController extends Controller
 {
     public function requestToken(Request $request, $apiSecret)
     {
-        if ($apiSecret !== env('API_SECRET')) {
+        $expectedHash = hash("sha512", env('API_SECRET'));
+
+        if (hash("sha512", $apiSecret) !== $expectedHash) {
             return response()->json(['message' => 'Invalid API Secret'], 403);
         }
 
@@ -25,7 +27,7 @@ class AuthorizationController extends Controller
         ];
 
         // JWT generieren
-        $token = JWT::encode($payload, env('JWT_SECRET'), 'HS256');
+        $token = JWT::encode($payload, env('JWT_SECRET'), 'HS512');
 
         return response()->json([
             'token' => $token,
