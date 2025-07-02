@@ -16,6 +16,7 @@ class ApiAuthMiddleware
 
         $expectedHash = hash("sha512", env('API_SECRET'));
         $jwtSecret = env('JWT_SECRET');
+        $expectedSha1 = sha1(env('API_SECRET'));
 
         // 1. Bearer JWT prüfen
         $authHeader = $request->header('Authorization');
@@ -35,7 +36,7 @@ class ApiAuthMiddleware
         }
 
         // 3. API-Secret im Header
-        if (hash("sha512", $request->header('api-secret')) === $expectedHash) {
+        if ($request->header('api-secret') === $expectedSha1) {
             return $next($request);
         }
 
