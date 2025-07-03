@@ -1,7 +1,8 @@
 # NoSQL Database Emulation Approach
 
 ## Status
-`Accepted`
+`Superseded`
+*Superseded by [ADR-0007: NoSQL Database Emulation Approach](./0007-nosql-emulation.md)*
 
 ## Context
 Our project requires emulating a document-oriented database (like MongoDB) in PHP. The initial idea was to use Laravel’s Eloquent ORM to define a flexible schema, allowing us to store documents as records and dynamically add columns if documents contain unexpected fields.  
