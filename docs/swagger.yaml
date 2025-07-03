@@ -1,0 +1,700 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:80/api
+  - url: http://localhost:8000/api
+info:
+  title: Nightscout PSE API - OpenAPI 3.0
+  description: API documentation for the Nightscout PHP/Laravel reimplementation.
+  version: 1.0.0
+security:
+  - api_secret: [ ]
+    token_in_url: [ ]
+    jwtoken: [ ]
+paths:
+  /entries:
+    get:
+      summary: All Entries matching query
+      description: The Entries endpoint returns information about the Nightscout entries.
+      parameters:
+        - name: find
+          in: query
+          required: false
+          description: The query used to find entries, supports nested query syntax.
+          schema:
+            type: string
+        - name: count
+          in: query
+          required: false
+          description: Number of entries to return.
+          schema:
+            type: number
+      tags: [ Entries ]
+      responses:
+        '200':
+          description: An array of entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entries'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags: [ Entries ]
+      summary: Add new entries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entries'
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/Entries'
+      responses:
+        '200':
+          description: Rejected list of entries. Empty list is success.
+        '405':
+          description: Invalid input
+    delete:
+      tags: [ Entries ]
+      summary: Delete entries matching query
+      operationId: remove
+      parameters:
+        - name: find
+          in: query
+          required: false
+          description: The query used to find entries, supports nested query syntax.
+          schema:
+            type: string
+        - name: count
+          in: query
+          required: false
+          description: Number of entries to return.
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Empty list is success.
+
+  /entries/current:
+    get:
+      summary: Get current entries
+      description: Returns the most recent or "current" entries.
+      tags: [ Entries ]
+      responses:
+        '200':
+          description: An array of entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entries'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /entries/preview:
+    post:
+      tags: [ Entries ]
+      summary: Preview entries import
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entries'
+      responses:
+        '200':
+          description: Preview result, typically a list of rejected or problematic entries.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entries'
+        '405':
+          description: Invalid input
+
+  /entries/{spec}:
+    get:
+      summary: All Entries matching query
+      description: The Entries endpoint returns information about the Nightscout entries.
+      parameters:
+        - name: spec
+          in: path
+          required: true
+          description: entry id, such as `55cf81bc436037528ec75fa5` or a type filter such as `sgv`, `mbg`, etc.
+          schema:
+            type: string
+            default: sgv
+        - name: find
+          in: query
+          required: false
+          description: The query used to find entries, supports nested query syntax.
+          schema:
+            type: string
+        - name: count
+          in: query
+          required: false
+          description: Number of entries to return.
+          schema:
+            type: number
+      tags: [ Entries ]
+      responses:
+        '200':
+          description: An array of entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entries'
+        default:
+          description: Entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entries'
+
+  /treatments:
+    get:
+      summary: Treatments
+      description: Returns information about the Nightscout treatments.
+      tags: [ Treatments ]
+      parameters:
+        - name: find
+          in: query
+          required: false
+          description: The query used to find treatments, supports nested query syntax.
+          schema:
+            type: string
+        - name: count
+          in: query
+          required: false
+          description: Number of entries to return.
+          schema:
+            type: number
+      responses:
+        '200':
+          description: An array of treatments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Treatments'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags: [ Treatments ]
+      summary: Add new treatments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Treatments'
+      responses:
+        '200':
+          description: Rejected list of treatments. Empty list is success.
+        '405':
+          description: Invalid input
+    delete:
+      tags: [ Treatments ]
+      summary: Delete treatments matching query
+      parameters:
+        - name: find
+          in: query
+          required: false
+          description: The query used to find treatments to delete.
+          schema:
+            type: string
+        - name: count
+          in: query
+          required: false
+          description: Number of entries to return.
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Empty list is success.
+
+  /treatments/{spec}:
+    delete:
+      summary: Delete treatments record with id provided in spec
+      description: Delete a treatment.
+      parameters:
+        - name: spec
+          in: path
+          required: true
+          description: Treatment id
+          schema:
+            type: string
+      tags: [ Treatments ]
+      responses:
+        '200':
+          description: A status record of the delete.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteStatus'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /profiles:
+    get:
+      summary: List all profiles
+      description: Returns all Nightscout profiles.
+      tags: [ Profile ]
+      responses:
+        '200':
+          description: Array of profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /profile:
+    get:
+      summary: Show profile
+      description: Get a specific Nightscout profile (default or current).
+      tags: [ Profile ]
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create new profile
+      description: Create and store a new Nightscout profile.
+      tags: [ Profile ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '201':
+          description: Profile created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Invalid input
+    put:
+      summary: Update profile
+      description: Update an existing Nightscout profile.
+      tags: [ Profile ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Invalid input
+
+  /profile/current:
+    get:
+      summary: Get current profile
+      description: Returns the current Nightscout profile.
+      tags: [ Profile ]
+      responses:
+        '200':
+          description: Current profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /profile/{id}:
+    delete:
+      summary: Delete profile by ID
+      description: Delete the profile with the given ID.
+      tags: [ Profile ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the profile to delete.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile deleted
+        '404':
+          description: Profile not found
+
+  /status:
+    get:
+      summary: Status
+      description: Server side status, default settings and capabilities.
+      tags: [ Status ]
+      responses:
+        '200':
+          description: Server capabilities and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /devicestatus/:
+    get:
+      summary: All Devicestatuses matching query
+      description: Returns information about the Nightscout devicestatus records.
+      tags: [ Devicestatus ]
+      parameters:
+        - name: find
+          in: query
+          required: false
+          description: The query used to find entries, supports nested query syntax.
+          schema:
+            type: string
+        - name: count
+          in: query
+          required: false
+          description: Number of devicestatus records to return.
+          schema:
+            type: number
+      responses:
+        '200':
+          description: An array of devicestatus entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Devicestatuses'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags: [ Devicestatus ]
+      summary: Add new devicestatus records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Devicestatuses'
+      responses:
+        '200':
+          description: Rejected list of device statuses. Empty list is success.
+        '405':
+          description: Invalid input
+    delete:
+      summary: Delete all Devicestatus records matching query
+      tags: [ Devicestatus ]
+      parameters:
+        - name: find
+          in: query
+          required: false
+          description: The query used to find entries, supports nested query syntax.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A status record of the delete.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteStatus'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /devicestatus/{spec}:
+    delete:
+      summary: Delete devicestatus record with id provided in spec
+      description: Delete devicestatus record.
+      parameters:
+        - name: spec
+          in: path
+          required: true
+          description: entry id
+          schema:
+            type: string
+      tags: [ Devicestatus ]
+      responses:
+        '200':
+          description: A status record of the delete.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteStatus'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    api_secret:
+      type: apiKey
+      name: api-secret
+      in: header
+      description: enter your api secret
+    token_in_url:
+      type: apiKey
+      name: token
+      in: query
+      description: Add api secret as query item in the URL.
+    jwtoken:
+      type: http
+      scheme: bearer
+      description: Use this if you know the temporary json webtoken.
+      bearerFormat: JWT
+  schemas:
+    Entry:
+      properties:
+        _id:
+          type: string
+        created_at:
+          type: string
+        date:
+          type: number
+          description: Epoch
+        dateString:
+          type: string
+          description: dateString, MUST be ISO `8601` format date parseable by Javascript Date()
+        direction:
+          type: string
+          description: Direction of glucose trend reported by CGM. (only available for sgv types)
+        extra_data:
+          type: object
+          description: >
+            Flexible extension object for storing nested JSON, arbitrary extra fields,
+            or properties not explicitly represented in this schema/table.
+            Used to accommodate fields not present as DB columns.
+          additionalProperties: true
+        filtered:
+          type: number
+          description: The raw filtered value directly from CGM transmitter. (only available for sgv types)
+        noise:
+          type: number
+          description: Noise level at time of reading. (only available for sgv types)
+        rssi:
+          type: number
+          description: The signal strength from CGM transmitter. (only available for sgv types)
+        sgv:
+          type: number
+          description: The glucose reading. (only available for sgv types)
+        type:
+          type: string
+          description: sgv, mbg, cal, etc
+        unfiltered:
+          type: number
+          description: The raw unfiltered value directly from CGM transmitter. (only available for sgv types)
+    Entries:
+      type: array
+      items:
+        $ref: '#/components/schemas/Entry'
+    Treatment:
+      properties:
+        _id:
+          type: string
+          description: Internally assigned id.
+        carbs:
+          type: number
+          description: Amount of carbs consumed in grams.
+        created_at:
+          type: string
+          description: The date of the event, might be set retroactively .
+        enteredBy:
+          type: string
+          description: Who entered the treatment.
+        eventType:
+          type: string
+          description: The type of treatment event.
+        extra_data:
+          type: object
+          description: >
+            Flexible extension object for storing nested JSON, arbitrary extra fields,
+            or properties not explicitly represented in this schema/table.
+            Used to accommodate fields not present as DB columns.
+          additionalProperties: true
+        fat:
+          type: number
+          description: Amount of fat consumed in grams.
+        glucose:
+          type: string
+          description: Current glucose.
+        glucoseType:
+          type: string
+          description: Method used to obtain glucose, Finger or Sensor.
+        insulin:
+          type: number
+          description: Amount of insulin, if any.
+        notes:
+          type: string
+          description: Description/notes of treatment.
+        protein:
+          type: number
+          description: Amount of protein consumed in grams.
+        sensorCode:
+          type: string
+          description: The code used to start a Dexcom G6 sensor.
+        transmitterId:
+          type: string
+          description: The transmitter ID of the transmitter being started.
+        units:
+          type: string
+          description: The units for the glucose value, mg/dl or mmol.
+    Treatments:
+      type: array
+      items:
+        $ref: '#/components/schemas/Treatment'
+    Devicestatus:
+      properties:
+        _id:
+          type: string
+        configuration:
+          type: string
+        created_at:
+          type: string
+          description: dateString, MUST be ISO `8601` format date parseable by Javascript Date()
+        device:
+          type: string
+          description: Device type and hostname for example openaps://hostname
+        extra_data:
+          type: object
+          description: >
+            Flexible extension object for storing nested JSON, arbitrary extra fields,
+            or properties not explicitly represented in this schema/table.
+            Used to accommodate fields not present as DB columns.
+          additionalProperties: true
+        isCharging:
+          type: boolean
+        loop:
+          type: string
+          description: Loop devicestatus record
+        openaps:
+          type: string
+          description: OpenAPS devicestatus record
+        pump:
+          type: string
+        uploader:
+          type: string
+        uploaderBattery:
+          type: number
+        xdripjs:
+          type: string
+    Devicestatuses:
+      type: array
+      items:
+        $ref: '#/components/schemas/Devicestatus'
+    Status:
+      properties:
+        _id:
+          type: string
+        apiEnabled:
+          type: boolean
+          description: Whether or not the REST API is enabled.
+        carePortalEnabled:
+          type: boolean
+          description: Whether or not the careportal is enabled in the API.
+        extended_settings:
+          type: string
+        extra_data:
+          type: object
+          description: >
+            Flexible extension object for storing nested JSON, arbitrary extra fields,
+            or properties not explicitly represented in this schema/table.
+            Used to accommodate fields not present as DB columns.
+          additionalProperties: true
+        head:
+          type: string
+          description: The git identifier for the running instance of the app.
+        name:
+          type: string
+          description: Nightscout (static)
+        settings:
+          type: string
+        version:
+          type: string
+          description: The version label of the app.
+    Profile:
+      properties:
+        _id:
+          type: string
+          description: Internally assigned id
+        created_at:
+          type: string
+        date:
+          type: string
+        defaultProfile:
+          type: string
+        extra_data:
+          type: object
+          description: >
+            Flexible extension object for storing nested JSON, arbitrary extra fields,
+            or properties not explicitly represented in this schema/table.
+            Used to accommodate fields not present as DB columns.
+          additionalProperties: true
+        startDate:
+          type: string
+        store:
+          type: string
+    Error:
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    DeleteStatus:
+      properties:
+        code:
+          type: integer
+        message:
+          type: string

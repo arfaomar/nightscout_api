@@ -52,7 +52,12 @@ connect with AndroidAPS.
 
 ---
 
-Füge im Abschnitt "Getting Started (Local)" einen eigenen Unterabschnitt für Laravel Sail hinzu. Beispiel:
+## Docs
+
+- API documentation available in [swagger.yaml](./docs/swagger.yaml)
+- Additional project documentation can be found in [docs/README.md](docs/README.md)
+
+---
 
 ### Using Laravel Sail (Docker)
 
