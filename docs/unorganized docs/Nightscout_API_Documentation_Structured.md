@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document provides a comprehensive technical reference for all Nightscout API endpoints, including routes, parameters, authentication, behaviors, and example usage.
+This document provides a comprehensive technical reference for all Nightscout API endpoints, including routes,
+parameters, authentication, behaviors, and example usage.
 
 ---
 
@@ -31,44 +32,51 @@ This document provides a comprehensive technical reference for all Nightscout AP
 > All endpoints require authorization and are only enabled if both `api` and `careportal` features are enabled.
 
 ### GET /activity
-Returns a list of activity data. Supports query parameters via `ctx.activity.list`. Supports `If-Modified-Since` for caching.
+
+Returns a list of activity data. Supports query parameters via `ctx.activity.list`. Supports `If-Modified-Since` for
+caching.
 
 ### POST /activity/
+
 **Description:** Create one or more activity records.
 
 **Authorization:** Requires `api:activity:create`.
 
 **Request Body:**
+
 ```json
 [
-  {
-    "eventType": "Exercise",
-    "duration": 30,
-    "created_at": "2025-06-19T10:00:00Z"
-  }
+    {
+        "eventType": "Exercise",
+        "duration": 30,
+        "created_at": "2025-06-19T10:00:00Z"
+    }
 ]
 ```
 
 **Response:**
+
 ```json
 [
-  {
-    "_id": "abc123",
-    "eventType": "Exercise",
-    "duration": 30,
-    "created_at": "2025-06-19T10:00:00Z"
-  }
+    {
+        "_id": "abc123",
+        "eventType": "Exercise",
+        "duration": 30,
+        "created_at": "2025-06-19T10:00:00Z"
+    }
 ]
 ```
 
 Creates one or more activity records. Requires `api:activity:create`.
 
 ### DELETE /activity/:_id
+
 **Description:** Delete an activity record by its `_id`.
 
 **Authorization:** Requires `api:activity:delete`.
 
 **Response:**
+
 ```json
 {}
 ```
@@ -76,26 +84,29 @@ Creates one or more activity records. Requires `api:activity:create`.
 Deletes an activity record by its `_id`. Requires `api:activity:delete`.
 
 ### PUT /activity/
+
 **Description:** Update an existing activity record.
 
 **Authorization:** Requires `api:activity:update`.
 
 **Request Body:**
+
 ```json
 {
-  "_id": "abc123",
-  "eventType": "Exercise",
-  "duration": 45
+    "_id": "abc123",
+    "eventType": "Exercise",
+    "duration": 45
 }
 ```
 
 **Response:**
+
 ```json
 {
-  "_id": "abc123",
-  "eventType": "Exercise",
-  "duration": 45,
-  "created_at": "2025-06-19T10:00:00Z"
+    "_id": "abc123",
+    "eventType": "Exercise",
+    "duration": 45,
+    "created_at": "2025-06-19T10:00:00Z"
 }
 ```
 
@@ -106,6 +117,7 @@ Updates an existing activity record. Requires `api:activity:update`.
 ## Alexa API Endpoint
 
 ### POST /alexa
+
 Handles Alexa Skill Kit requests (LaunchRequest, IntentRequest, etc.) and responds with valid Alexa responses.
 
 - Requires `api:*:read` permission
@@ -113,21 +125,22 @@ Handles Alexa Skill Kit requests (LaunchRequest, IntentRequest, etc.) and respon
 - Returns Alexa-compatible JSON response
 
 Example:
+
 ```json
 {
-  "request": {
-    "type": "IntentRequest",
-    "locale": "en-US",
-    "intent": {
-      "name": "GetGlucoseIntent",
-      "slots": {
-        "metric": {
-          "name": "metric",
-          "value": "glucose"
+    "request": {
+        "type": "IntentRequest",
+        "locale": "en-US",
+        "intent": {
+            "name": "GetGlucoseIntent",
+            "slots": {
+                "metric": {
+                    "name": "metric",
+                    "value": "glucose"
+                }
+            }
         }
-      }
     }
-  }
 }
 ```
 
@@ -136,15 +149,19 @@ Example:
 ## DeviceStatus API Endpoints
 
 ### GET /devicestatus/
+
 Returns recent device status records. Supports `count` and query filters.
 
 ### POST /devicestatus/
+
 Creates a new device status record. Requires `api:devicestatus:create`.
 
 ### DELETE /devicestatus/:id
+
 Deletes a device status record by ID. Requires `api:devicestatus:delete`.
 
 ### DELETE /devicestatus/
+
 Deletes one or more records using query parameters.
 
 ---
@@ -152,27 +169,35 @@ Deletes one or more records using query parameters.
 ## Entries API Endpoints
 
 ### GET /entries
+
 Returns CGM entries. Supports filtering with `find` and `count`.
 
 ### GET /entries/current
+
 Returns the most recent entry.
 
 ### GET /entries/:spec
+
 Returns entry by ID or type.
 
 ### POST /entries/
+
 Creates new entries. Requires `api:entries:create`.
 
 ### POST /entries/preview
+
 Validates entries without saving. Requires `api:entries:create`.
 
 ### DELETE /entries/:spec
+
 Deletes entry by ID or type. Requires `api:entries:delete`.
 
 ### DELETE /entries/
+
 Deletes entries via query. Requires `api:entries:delete`.
 
 ### Special Routes:
+
 - `GET /times/:prefix/:regex`
 - `GET /slice/:storage/:field/:type/:prefix/:regex`
 - `GET /echo/:echo/:model/:spec`
@@ -182,6 +207,7 @@ Deletes entries via query. Requires `api:entries:delete`.
 ## Experiments API Endpoint
 
 ### GET /test
+
 Test/debug endpoint. Requires `authorization:debug:test`. Returns `{ "status": "ok" }`.
 
 ---
@@ -192,15 +218,16 @@ Includes GET, POST, PUT, DELETE under `/food/`.
 
 - Public: `GET /food/`, `/quickpicks`, `/regular`
 - Protected:
-  - `POST /food/` → `api:food:create`
-  - `PUT /food/` → `api:food:update`
-  - `DELETE /food/:_id` → `api:food:delete`
+    - `POST /food/` → `api:food:create`
+    - `PUT /food/` → `api:food:update`
+    - `DELETE /food/:_id` → `api:food:delete`
 
 ---
 
 ## Google Home API Endpoint
 
 ### POST /googlehome
+
 Handles requests from Google Home via Dialogflow.
 
 - Requires `api:*:read`
@@ -212,21 +239,27 @@ Handles requests from Google Home via Dialogflow.
 ## Profiles API Endpoints
 
 ### GET /profiles/
+
 Returns profile list. Optional `count`.
 
 ### GET /profile/
+
 Returns profile attributes. Optional `count`.
 
 ### GET /profile/current
+
 Returns current active profile.
 
 ### POST /profile/
+
 Creates a profile. Requires `api:profile:create`.
 
 ### PUT /profile/
+
 Updates a profile. Requires `api:profile:update`.
 
 ### DELETE /profile/:_id
+
 Deletes a profile. Requires `api:profile:delete`.
 
 ---
@@ -234,18 +267,23 @@ Deletes a profile. Requires `api:profile:delete`.
 ## Treatments API Endpoints
 
 ### GET /treatments
+
 Returns treatment records. Supports `count` and filters.
 
 ### POST /treatments/
+
 Creates one or more treatments.
 
 ### DELETE /treatments/:id
+
 Deletes treatment by ID. Supports wildcard with `find`.
 
 ### DELETE /treatments/
+
 Deletes treatments using query filters.
 
 ### PUT /treatments/
+
 Updates a treatment record.
 
 ---
@@ -253,26 +291,28 @@ Updates a treatment record.
 ## Status API Endpoint
 
 ### GET /status
+
 Returns API/server status, version, time, and enabled features.
 
 - Supports formats: HTML, JSON, PNG, SVG, JavaScript, Text
 - Query: `token` or `secret` (optional)
 
 Example JSON:
+
 ```json
 {
-  "status": "ok",
-  "name": "Nightscout",
-  "version": "x.y.z",
-  "serverTime": "2025-06-19T13:00:00.000Z",
-  "serverTimeEpoch": 1750347600000,
-  "apiEnabled": true,
-  "careportalEnabled": true,
-  "boluscalcEnabled": false,
-  "settings": {},
-  "extendedSettings": {},
-  "authorized": true,
-  "runtimeState": {}
+    "status": "ok",
+    "name": "Nightscout",
+    "version": "x.y.z",
+    "serverTime": "2025-06-19T13:00:00.000Z",
+    "serverTimeEpoch": 1750347600000,
+    "apiEnabled": true,
+    "careportalEnabled": true,
+    "boluscalcEnabled": false,
+    "settings": {},
+    "extendedSettings": {},
+    "authorized": true,
+    "runtimeState": {}
 }
 ```
 
@@ -281,13 +321,19 @@ Example JSON:
 ## Admin Notifications API Endpoint
 
 ### GET /adminnotifies
+
 Returns notifications for admin users, or just count for others.
 
 Example (admin):
+
 ```json
 {
-  "notifies": [{ /* object */ }],
-  "notifyCount": 1
+    "notifies": [
+        {
+            "<object>": {}
+        }
+    ],
+    "notifyCount": 1
 }
 ```
 
@@ -296,9 +342,11 @@ Example (admin):
 ## Notifications API Endpoints
 
 ### POST /notifications/pushovercallback
+
 Processes Pushover acknowledgments.
 
 ### GET /notifications/ack
+
 Acknowledges a notification. Requires `notifications:*:ack`.
 
 ---
@@ -306,14 +354,25 @@ Acknowledges a notification. Requires `notifications:*:ack`.
 ## Root API Endpoint
 
 ### GET /versions
+
 Returns available API versions.
 
 Example:
+
 ```json
 [
-  { "version": "v1", "url": "/api/v1" },
-  { "version": "v2", "url": "/api/v2" },
-  { "version": "v3", "url": "/api/v3" }
+    {
+        "version": "v1",
+        "url": "/api/v1"
+    },
+    {
+        "version": "v2",
+        "url": "/api/v2"
+    },
+    {
+        "version": "v3",
+        "url": "/api/v3"
+    }
 ]
 ```
 
@@ -323,7 +382,7 @@ Example:
 
 - Enables API if API key is present
 - Registers feature modules under respective paths:
-  - `/entries`, `/treatments`, `/profile`, `/food`, etc.
+    - `/entries`, `/treatments`, `/profile`, `/food`, etc.
 - Always includes `/verifyauth`, `/adminnotifies`
 - Uses middleware from `ctx.wares`
 - Supports formats: JSON, SVG, PNG, TXT, CSV, HTML, TSV
@@ -333,20 +392,18 @@ Example:
 ## Verify Authorization API Endpoint
 
 ### GET /verifyauth
+
 Checks the requester's access rights.
 
 Response:
+
 ```json
 {
-  "canRead": true,
-  "canWrite": false,
-  "isAdmin": false,
-  "message": "OK",
-  "rolefound": "FOUND",
-  "permissions": "ROLE"
+    "canRead": true,
+    "canWrite": false,
+    "isAdmin": false,
+    "message": "OK",
+    "rolefound": "FOUND",
+    "permissions": "ROLE"
 }
 ```
-
----
-
-*Generated from the Nightscout GitHub source code for developers and integrators.*

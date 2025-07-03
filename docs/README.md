@@ -6,6 +6,11 @@ Welcome to the API documentation.
 
 - [Authentication](authentication.md)
 
+## Database Documentation
+- 
+
+- [Database Documentation](database.md)
+
 ## Endpoints
 
 - [Activity Endpoints](activity_endpoints.md)
@@ -23,3 +28,7 @@ Welcome to the API documentation.
 - [Status Endpoints](status_endpoints.md)
 - [Treatment Endpoints](treatment_endpoints.md)
 - [Verify Auth Endpoints](verify_auth_endpoints.md)
+
+## Unimplemented Features & Endpoints
+
+- [Unimplemented Features](unimplemented_features.md)
