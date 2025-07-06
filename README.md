@@ -54,9 +54,9 @@ connect with AndroidAPS.
 
 ## Docs
 
-- API documentation available in [swagger.yaml](./docs/swagger.yaml)
+- API documentation available in [swagger.yaml](./docs/swagger/swagger.yaml)
 - Additional project documentation can be found in [docs/README.md](docs/README.md)
-
+- [Node.js Socket.IO Bridge](https://code.fbi.h-da.de/pse_nightscout/aaps-laravel-bridge) for real-time communication with AndroidAPS
 ---
 
 ### Using Laravel Sail (Docker)
