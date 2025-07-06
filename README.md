@@ -54,7 +54,8 @@ connect with AndroidAPS.
 
 ## Docs
 
-- API documentation available in [swagger.yaml](./docs/swagger/swagger.yaml)
+- Open API documentation available in [swagger.yaml](./docs/swagger/swagger.yaml)
+- Postman collection available in [postman_collection.json](./docs/postman/postman-collection.json)
 - Additional project documentation can be found in [docs/README.md](docs/README.md)
 - [Node.js Socket.IO Bridge](https://code.fbi.h-da.de/pse_nightscout/aaps-laravel-bridge) for real-time communication with AndroidAPS
 ---

@@ -1,0 +1,503 @@
+{
+	"info": {
+		"_postman_id": "965a3d6f-a2ae-4d45-b4f2-8b3bbf138c77",
+		"name": "API Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34989653"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get JWT Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/auth",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Entries",
+			"item": [
+				{
+					"name": "All Entries matching query",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/entries",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add new entries",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/entries",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete entries matching query",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/entries",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current entries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/entries/current",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"entries",
+								"current"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Preview entries import",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/entries/preview",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"entries",
+								"preview"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{spec} All entries matching query",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/entries/preview/{{spec}}",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"entries",
+								"preview",
+								"{{spec}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Treatments",
+			"item": [
+				{
+					"name": "Treatments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/treatments",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"treatments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add new treatments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/treatments",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"treatments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete treatments matching query",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/treatments",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"treatments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{spec} Delete treatments record with id provided in spec",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/treatments",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"treatments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "List all profiles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/profiles",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"profiles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/profile",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new profile",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/profile",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/profile",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/profile/current",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"profile",
+								"current"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{id} Delete profile by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/profile/{{ID}}",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"profile",
+								"{{ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/status",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Devicestatus",
+			"item": [
+				{
+					"name": "All Devicestatuses matching query",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/devicestatus",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"devicestatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add new devicestatus records",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/devicestatus",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"devicestatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete all Devicestatus records matchin query",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/devicestatus",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"devicestatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{spec} Delete devicestatus record with id provided in spec",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/devicestatus/{{spec}}",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"devicestatus",
+								"{{spec}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "jwt",
+		"jwt": [
+			{
+				"key": "headerPrefix",
+				"value": "api-secret",
+				"type": "string"
+			},
+			{
+				"key": "secret",
+				"value": "{{API_SECRET}}",
+				"type": "string"
+			},
+			{
+				"key": "algorithm",
+				"value": "HS256",
+				"type": "string"
+			},
+			{
+				"key": "isSecretBase64Encoded",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "payload",
+				"value": "{}",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "queryParamKey",
+				"value": "token",
+				"type": "string"
+			},
+			{
+				"key": "header",
+				"value": "{}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "http://localhost",
+			"type": "string"
+		},
+		{
+			"key": "API_SECRET",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
