@@ -63,6 +63,7 @@ connect with AndroidAPS.
 ### Using Laravel Sail (Docker)
 
 If you want to use Laravel Sail (Docker-based local development):
+![dev env](./docs/illustrations/dev_env.png)
 
 1. Start Sail:
 
@@ -117,6 +118,28 @@ php artisan serve
 
 Server will then run at:  
 `http://127.0.0.1:8000`
+
+---
+---
+
+## Getting Started (Production)
+
+![prod env](./docs/illustrations/prod_env.png)
+
+### 1. Clone the repository
+
+```bash
+git clone https://code.fbi.h-da.de/istkrsadl/nightscoutpse.git
+cd NightscoutPSE
+```
+
+### 2. Install dependencies
+
+```bash
+composer install
+cp .env.example .env
+```
+
 
 ---
 
