@@ -62,7 +62,7 @@ connect with AndroidAPS.
 
 ### Using Laravel Sail (Docker)
 
-If you want to use Laravel Sail (Docker-based local development):
+If you want to use Laravel Sail **after cloning** (Docker-based local development):
 ![dev env](./docs/illustrations/dev_env.png)
 
 1. Start Sail:
@@ -99,7 +99,7 @@ For more information, see: https://laravel.com/docs/12.x/sail
 ### 1. Clone the repository
 
 ```bash
-git clone https://code.fbi.h-da.de/istkrsadl/nightscoutpse.git
+git clone https://code.fbi.h-da.de/pse_nightscout/nightscout_api.git
 cd NightscoutPSE
 ```
 
@@ -129,7 +129,7 @@ Server will then run at:
 ### 1. Clone the repository
 
 ```bash
-git clone https://code.fbi.h-da.de/istkrsadl/nightscoutpse.git
+git https://code.fbi.h-da.de/pse_nightscout/nightscout_api.git
 cd NightscoutPSE
 ```
 
