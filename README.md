@@ -63,6 +63,7 @@ connect with AndroidAPS.
 ### Using Laravel Sail (Docker)
 
 If you want to use Laravel Sail **after cloning** (Docker-based local development):
+
 ![dev env](./docs/illustrations/dev_env.png)
 
 1. Start Sail:
