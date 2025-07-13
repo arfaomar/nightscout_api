@@ -11,7 +11,7 @@ class AuthorizationController extends Controller
     {
         $expectedHash = hash('sha512', env('API_SECRET'));
 
-        if (hash('sha512', $apiSecret) !== $expectedHash) {
+        if (! hash_equals($expectedHash, hash('sha512', $apiSecret))) {
             return response()->json(['message' => 'Invalid API Secret'], 403);
         }
 
